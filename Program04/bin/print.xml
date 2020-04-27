@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<print>
+  <!--Generated for N4 printing on 2019-11-08 14:07:41.642699-->
+  <truck>
+    <license>ESS123</license>
+    <company code="500001">SIAM SHORESIDE SERVICES LTD</company>
+    <start>2019-11-07 09:50:49</start>
+  </truck>
+  <containers>
+    <container>
+      <number>HASU4316185</number>
+      <trans_type>RE</trans_type>
+      <line>MSK</line>
+      <iso code="45G1">40' 9.6 GP</iso>
+      <vessel>
+        <code>H7P928N928S</code>
+        <name>RDO FURTUNE</name>
+        <voy_in>928N</voy_in>
+        <voy_out>928S</voy_out>
+        <full_name>H7P928N928S/928S RDO FURTUNE</full_name>
+      </vessel>
+      <freightkind>FCL</freightkind>
+      <pod>MYTPP</pod>
+      <gross_weight>41000.0</gross_weight>
+      <created>Nov 7, 2019 9:51 AM</created>
+      <creator>gab2295</creator>
+      <changed>Nov 7, 2019 9:52 AM</changed>
+      <changer>-system-</changer>
+      <damage>False</damage>
+      <position>02B-02</position>
+      <damage/>
+      <category>[EXPRT]</category>
+      <seal1/>
+      <seal2/>
+    </container>
+  </containers>
+</print>

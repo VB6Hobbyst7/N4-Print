@@ -1,0 +1,1067 @@
+﻿Imports System.Drawing.Printing
+Imports System.IO
+Imports System.Net
+Imports Newtonsoft.Json
+'Imports ServiceStack.Redis
+Imports StackExchange.Redis
+
+'Imports System.Net
+Imports System.Web.Script.Serialization
+Imports System.Windows.Forms
+Imports System.Threading.Channels
+Imports System.Reflection
+Imports System.Text.RegularExpressions
+Imports System.Xml
+
+Public Class Form1
+    Inherits System.Windows.Forms.Form
+
+    ' Constant variable holding the Printer name.
+    'BIXOLON SRP-330II
+    'CutePDF Writer
+    Private Const PRINTER_NAME As String = "BIXOLON SRP-330II"
+    Friend WithEvents PictureBox1 As PictureBox
+    Friend WithEvents lcb1_logo As PictureBox
+    Friend WithEvents iso_logo As PictureBox
+
+    ' Variables/Objects.
+    Private WithEvents pdPrint As PrintDocument
+    Private WithEvents pdEirPrint As PrintDocument
+
+    'Dim redisClient As RedisClient
+    Dim redis As ConnectionMultiplexer
+    Friend WithEvents lblMsg As Label
+    Dim db As IDatabase
+
+    Dim objCurrentPrintingJson As Object
+    Friend WithEvents txtLicense As TextBox
+    Friend WithEvents Label1 As Label
+    Friend WithEvents btnReprint As Button
+    Friend WithEvents lblFile As Label
+    Friend WithEvents btnFile As Button
+    Friend WithEvents Label2 As Label
+    Friend WithEvents OpenFileDialog1 As OpenFileDialog
+    Friend WithEvents btnFilePrint As Button
+    Dim vDocumentType As String
+
+
+#Region " Windows Form Designer generated code "
+
+    Public Sub New()
+        MyBase.New()
+
+        'This call is required by the Windows Form Designer.
+        InitializeComponent()
+
+        'Add any initialization after the InitializeComponent() call
+
+    End Sub
+
+    'Form overrides dispose to clean up the component list.
+    Protected Overloads Overrides Sub Dispose(ByVal disposing As Boolean)
+        If disposing Then
+            If Not (components Is Nothing) Then
+                components.Dispose()
+            End If
+        End If
+        MyBase.Dispose(disposing)
+    End Sub
+
+    'Required by the Windows Form Designer
+    Private components As System.ComponentModel.IContainer
+
+    'NOTE: The following procedure is required by the Windows Form Designer
+    'It can be modified using the Windows Form Designer.  
+    'Do not modify it using the code editor.
+    Friend WithEvents cmdClose As System.Windows.Forms.Button
+    Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
+    Friend WithEvents pbImage As System.Windows.Forms.PictureBox
+    <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form1))
+        Me.cmdClose = New System.Windows.Forms.Button()
+        Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.btnReprint = New System.Windows.Forms.Button()
+        Me.txtLicense = New System.Windows.Forms.TextBox()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.lblMsg = New System.Windows.Forms.Label()
+        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+        Me.pbImage = New System.Windows.Forms.PictureBox()
+        Me.lcb1_logo = New System.Windows.Forms.PictureBox()
+        Me.iso_logo = New System.Windows.Forms.PictureBox()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
+        Me.btnFile = New System.Windows.Forms.Button()
+        Me.lblFile = New System.Windows.Forms.Label()
+        Me.btnFilePrint = New System.Windows.Forms.Button()
+        Me.GroupBox1.SuspendLayout()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.pbImage, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.lcb1_logo, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.iso_logo, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SuspendLayout()
+        '
+        'cmdClose
+        '
+        Me.cmdClose.Location = New System.Drawing.Point(288, 131)
+        Me.cmdClose.Name = "cmdClose"
+        Me.cmdClose.Size = New System.Drawing.Size(75, 23)
+        Me.cmdClose.TabIndex = 3
+        Me.cmdClose.Text = "Close"
+        '
+        'GroupBox1
+        '
+        Me.GroupBox1.Controls.Add(Me.btnFilePrint)
+        Me.GroupBox1.Controls.Add(Me.lblFile)
+        Me.GroupBox1.Controls.Add(Me.btnFile)
+        Me.GroupBox1.Controls.Add(Me.Label2)
+        Me.GroupBox1.Controls.Add(Me.iso_logo)
+        Me.GroupBox1.Controls.Add(Me.btnReprint)
+        Me.GroupBox1.Controls.Add(Me.lcb1_logo)
+        Me.GroupBox1.Controls.Add(Me.txtLicense)
+        Me.GroupBox1.Controls.Add(Me.pbImage)
+        Me.GroupBox1.Controls.Add(Me.Label1)
+        Me.GroupBox1.Controls.Add(Me.lblMsg)
+        Me.GroupBox1.Controls.Add(Me.PictureBox1)
+        Me.GroupBox1.Location = New System.Drawing.Point(9, 12)
+        Me.GroupBox1.Name = "GroupBox1"
+        Me.GroupBox1.Size = New System.Drawing.Size(354, 113)
+        Me.GroupBox1.TabIndex = 2
+        Me.GroupBox1.TabStop = False
+        Me.GroupBox1.Text = "Client : "
+        '
+        'btnReprint
+        '
+        Me.btnReprint.Location = New System.Drawing.Point(266, 41)
+        Me.btnReprint.Name = "btnReprint"
+        Me.btnReprint.Size = New System.Drawing.Size(87, 27)
+        Me.btnReprint.TabIndex = 10
+        Me.btnReprint.Text = "&Reprint"
+        Me.btnReprint.UseVisualStyleBackColor = True
+        '
+        'txtLicense
+        '
+        Me.txtLicense.Location = New System.Drawing.Point(62, 41)
+        Me.txtLicense.Name = "txtLicense"
+        Me.txtLicense.Size = New System.Drawing.Size(144, 20)
+        Me.txtLicense.TabIndex = 9
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(6, 44)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(50, 13)
+        Me.Label1.TabIndex = 8
+        Me.Label1.Text = "License :"
+        '
+        'lblMsg
+        '
+        Me.lblMsg.AutoSize = True
+        Me.lblMsg.Location = New System.Drawing.Point(6, 17)
+        Me.lblMsg.Name = "lblMsg"
+        Me.lblMsg.Size = New System.Drawing.Size(101, 13)
+        Me.lblMsg.TabIndex = 7
+        Me.lblMsg.Text = "Response Massage"
+        '
+        'PictureBox1
+        '
+        Me.PictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.PictureBox1.Location = New System.Drawing.Point(181, -5)
+        Me.PictureBox1.Name = "PictureBox1"
+        Me.PictureBox1.Size = New System.Drawing.Size(39, 50)
+        Me.PictureBox1.TabIndex = 5
+        Me.PictureBox1.TabStop = False
+        Me.PictureBox1.Visible = False
+        '
+        'pbImage
+        '
+        Me.pbImage.Image = CType(resources.GetObject("pbImage.Image"), System.Drawing.Image)
+        Me.pbImage.Location = New System.Drawing.Point(103, -5)
+        Me.pbImage.Name = "pbImage"
+        Me.pbImage.Size = New System.Drawing.Size(72, 40)
+        Me.pbImage.TabIndex = 4
+        Me.pbImage.TabStop = False
+        Me.pbImage.Visible = False
+        '
+        'lcb1_logo
+        '
+        Me.lcb1_logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.lcb1_logo.Image = CType(resources.GetObject("lcb1_logo.Image"), System.Drawing.Image)
+        Me.lcb1_logo.Location = New System.Drawing.Point(226, -15)
+        Me.lcb1_logo.Name = "lcb1_logo"
+        Me.lcb1_logo.Size = New System.Drawing.Size(39, 50)
+        Me.lcb1_logo.TabIndex = 6
+        Me.lcb1_logo.TabStop = False
+        Me.lcb1_logo.Visible = False
+        '
+        'iso_logo
+        '
+        Me.iso_logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.iso_logo.Image = CType(resources.GetObject("iso_logo.Image"), System.Drawing.Image)
+        Me.iso_logo.Location = New System.Drawing.Point(279, -15)
+        Me.iso_logo.Name = "iso_logo"
+        Me.iso_logo.Size = New System.Drawing.Size(39, 50)
+        Me.iso_logo.TabIndex = 7
+        Me.iso_logo.TabStop = False
+        Me.iso_logo.Visible = False
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(6, 82)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(29, 13)
+        Me.Label2.TabIndex = 11
+        Me.Label2.Text = "File :"
+        '
+        'OpenFileDialog1
+        '
+        Me.OpenFileDialog1.FileName = "OpenFileDialog1"
+        '
+        'btnFile
+        '
+        Me.btnFile.Location = New System.Drawing.Point(62, 77)
+        Me.btnFile.Name = "btnFile"
+        Me.btnFile.Size = New System.Drawing.Size(27, 23)
+        Me.btnFile.TabIndex = 12
+        Me.btnFile.Text = "..."
+        Me.btnFile.UseVisualStyleBackColor = True
+        '
+        'lblFile
+        '
+        Me.lblFile.AutoSize = True
+        Me.lblFile.Location = New System.Drawing.Point(95, 82)
+        Me.lblFile.Name = "lblFile"
+        Me.lblFile.Size = New System.Drawing.Size(29, 13)
+        Me.lblFile.TabIndex = 13
+        Me.lblFile.Text = "File :"
+        '
+        'btnFilePrint
+        '
+        Me.btnFilePrint.Location = New System.Drawing.Point(266, 72)
+        Me.btnFilePrint.Name = "btnFilePrint"
+        Me.btnFilePrint.Size = New System.Drawing.Size(87, 28)
+        Me.btnFilePrint.TabIndex = 14
+        Me.btnFilePrint.Text = "Print File"
+        Me.btnFilePrint.UseVisualStyleBackColor = True
+        '
+        'Form1
+        '
+        Me.AutoScaleBaseSize = New System.Drawing.Size(5, 13)
+        Me.ClientSize = New System.Drawing.Size(367, 155)
+        Me.Controls.Add(Me.cmdClose)
+        Me.Controls.Add(Me.GroupBox1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.MaximizeBox = False
+        Me.MinimizeBox = False
+        Me.Name = "Form1"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
+        Me.Text = "N4-Print"
+        Me.GroupBox1.ResumeLayout(False)
+        Me.GroupBox1.PerformLayout()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.pbImage, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.lcb1_logo, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.iso_logo, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.ResumeLayout(False)
+
+    End Sub
+
+#End Region
+
+    Public Function MMToHP(ByVal pMM As Integer) As Integer 'HP : hundredth of an inch
+
+        Return Convert.ToInt32(pMM * 100 / 25.4)
+
+    End Function
+
+
+
+    ' The event handler function when pdPrint.Print is called.
+    ' This is where the actual printing of sample data to the printer is made.
+    Private Sub pdPrint_Print(ByVal sender As System.Object, ByVal e As PrintPageEventArgs) Handles pdPrint.PrintPage
+        Dim x, y, lineOffset As Integer
+        'Initial value from JsonObject
+        Dim vPrintDate As String = objCurrentPrintingJson("start")
+        Dim vLicence As String = objCurrentPrintingJson("license")
+        '-----------------------------
+
+        If vDocumentType = "EIR" Then
+            Dim objContainer As Object
+            For Each objContainer In objCurrentPrintingJson("containers")
+                EirPrint(objContainer, vLicence, objCurrentPrintingJson("company"), e)
+            Next
+            Exit Sub
+        End If
+
+        If vDocumentType = "TID" Then
+            ' Instantiate font objects used in printing.
+            Dim printFont As New Font("Arial", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+            Dim headFont As New Font("Arial", 16, FontStyle.Bold, GraphicsUnit.Point) 'Substituted to FontA Font
+            Dim thaiFont As New Font("Microsoft San Serif", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+
+
+
+            e.Graphics.PageUnit = GraphicsUnit.Point
+            x = 5
+            y = 1
+            e.Graphics.DrawString("TID", headFont, Brushes.Black, x, y)
+            lineOffset = printFont.GetHeight(e.Graphics)
+
+            y += lineOffset + 10
+            x = 10
+            e.Graphics.DrawString(vPrintDate, printFont, Brushes.Black, x, y)
+            y += 10 : x = 10
+            e.Graphics.DrawString(My.Resources.thai.licence + ": " & vLicence, thaiFont, Brushes.Black, x, y)
+            y += 10 : x = 10
+            e.Graphics.DrawString("________________________________", printFont, Brushes.Black, x, y)
+
+            Dim positionFont As New Font("Arial", 32, FontStyle.Bold, GraphicsUnit.Point) 'Substituted to FontA Font
+            Dim containerFont As New Font("Arial", 12, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+            Dim sealFont As New Font("Arial", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+            Dim xSeal As Integer = 120
+            '--Print  COntainer
+            'y += 10 : x = 10
+            lineOffset = printFont.GetHeight(e.Graphics)
+            Dim objContainer As Object
+            Dim vTransType As String = ""
+            Dim Exportwords As Regex = New Regex("RE|RM|Dray in")
+            Dim Importwords As Regex = New Regex("DI|DM|Dray out")
+            'Dim strExportarray As String() = {"RE", "RM", "Dray in"}
+            'Dim strImporttarray As String() = {"DI", "DM", "Dray off"}
+
+            For Each objContainer In objCurrentPrintingJson("containers")
+                'lineOffset = positionFont.GetHeight(e.Graphics)
+                y += lineOffset : x = 10
+                If Exportwords.IsMatch(objContainer("trans_type").ToString) Then
+                    vTransType = My.Resources.thai.liftoff 'ส่งตู้
+                Else
+                    vTransType = My.Resources.thai.lifton 'รับตู้
+                End If
+                e.Graphics.DrawString(vTransType + ": " & objContainer("number"), containerFont, Brushes.Black, x, y)
+                lineOffset = containerFont.GetHeight(e.Graphics)
+                y += lineOffset : x = 10
+                e.Graphics.DrawString(objContainer("position"), positionFont, Brushes.Black, x, y)
+                e.Graphics.DrawString("Seal  :" & objContainer("seal1"), sealFont, Brushes.Black, xSeal, y + 5)
+                e.Graphics.DrawString("Damage: " & objContainer("damage"), sealFont, Brushes.Black, xSeal, y + sealFont.GetHeight(e.Graphics) + 10)
+                lineOffset = positionFont.GetHeight(e.Graphics)
+            Next
+
+            Dim url As String = "http://192.168.10.20:8010/" & vLicence
+            Dim tClient As WebClient = New WebClient
+            Dim tImage As Bitmap = Bitmap.FromStream(New MemoryStream(tClient.DownloadData(url)))
+            PictureBox1.Image = tImage
+            lineOffset = positionFont.GetHeight(e.Graphics)
+            y += lineOffset
+            x = 10
+            e.Graphics.DrawImage(PictureBox1.Image, x, y, 160, 160)
+        End If
+
+
+        ' Indicate that no more data to print, and the Print Document can now send the print data to the spooler.
+        e.HasMorePages = False
+    End Sub
+
+
+    Private Sub EirPrint(container As Object, license As String, company As String, ByVal e As PrintPageEventArgs)
+        Dim x, y, lineOffset As Integer
+
+        ' Instantiate font objects used in printing.
+        Dim printFont As New Font("Arial", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+        Dim headFont As New Font("Arial", 10, FontStyle.Bold, GraphicsUnit.Point) 'Substituted to FontA Font
+        'Dim thaiFont As New Font("Microsoft San Serif", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+
+        e.Graphics.PageUnit = GraphicsUnit.Point
+
+        Dim x_end As Integer
+        Dim x_half As Integer
+        Dim y_start As Integer
+        Dim y_end As Integer
+        x = 5
+        x_end = 220
+        x_half = 110
+        y = 10
+        'Company logo
+        e.Graphics.DrawImage(lcb1_logo.Image, x, y, 50, 40)
+        x = 150
+        e.Graphics.DrawImage(iso_logo.Image, x, y, 50, 40)
+        'EIR Topic
+        Dim thaiFont As New Font("Microsoft San Serif", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+        Dim thaiEIRFont As New Font("Microsoft San Serif", 14, FontStyle.Bold, GraphicsUnit.Point) 'Substituted to FontA Font
+
+        y += 60 : x = 10
+
+        e.Graphics.DrawString(My.Resources.thai.eir, thaiEIRFont, Brushes.Black, x, y)
+        lineOffset = thaiEIRFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("EQUIPMENT INTERCHANGE RECEIPT", headFont, Brushes.Black, x, y)
+        lineOffset = headFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 1), New Point(x, y), New Point(x_end, y))
+        lineOffset = 5
+
+        '--First Row
+        y += lineOffset : x = 10
+        y_start = y
+        e.Graphics.DrawString(My.Resources.thai.order_date + " Order date", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.shpping_line + " Shipping line", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(container("created"), printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(container("line"), printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+        '--Second Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.container_no + " Container", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.imo + " IMO / UN NO.", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(container("number"), printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Third Row
+        Dim voy_text As String
+        voy_text = My.Resources.thai.vessel & "/" & My.Resources.thai.voy &
+                    "Vessel/Voy"
+        y += lineOffset : x = 10
+
+        e.Graphics.DrawString(voy_text, printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.move + " Move", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(container("vessel_name"), printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(container("freightkind"), printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Fourt Row
+        Dim temp_text As String
+        temp_text = My.Resources.thai.temperature & " Temperature"
+        y += lineOffset : x = 10
+
+        e.Graphics.DrawString(temp_text, printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.pod + " POD", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(container("pod"), printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Fift Row
+        y += lineOffset : x = 10
+
+        e.Graphics.DrawString(My.Resources.thai.container_type & " Size /Type", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.date_ + " Date", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(container("iso_text"), printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(container("created"), printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Six Row
+        y += lineOffset : x = 10
+
+        e.Graphics.DrawString(My.Resources.thai.iso_code & " ISO code", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.license + " Plate No", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(container("iso_code"), printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(license, printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Seven Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.truck_company & " Truck Company", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.consignee + " Consignee", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(company, printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Eight Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.booking_no & " Booking No", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.seal_no + " Seal No", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(container("seal1"), printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Nine Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.weight & " Gross weight", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.exception + " Exception", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(container("gross_weight"), printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Ten Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.genset_no & " Genset No", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.damage + " Damage", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(container("damage"), printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+
+
+        '--Twelth Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.checker & " Checker", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.date_ + " Date", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(container("creator"), printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(container("created"), printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        y_end = y
+        '--Eleven Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.remark & " Remark", printFont, Brushes.Black, x, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("", printFont, Brushes.Black, x, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        'Hale vertical Line
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x_half, y_start), New Point(x_half, y_end))
+
+        e.HasMorePages = False
+    End Sub
+
+    '' The event handler function when pdPrint.Print is called.
+    '' This is where the actual printing of sample data to the printer is made.
+    'Private Sub pdPrint_Print(ByVal sender As System.Object, ByVal e As PrintPageEventArgs) Handles pdPrint.PrintPage
+    '    Dim x, y, lineOffset As Integer
+
+    '    ' Instantiate font objects used in printing.
+    '    Dim printFont As New Font("Lucida Console", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+
+    '    e.Graphics.PageUnit = GraphicsUnit.Point
+
+    '    ' Draw the bitmap
+    '    x = 79
+    '    y = 0
+    '    e.Graphics.DrawImage(pbImage.Image, x, y, pbImage.Image.Width - 13, pbImage.Image.Height - 10)
+
+    '    ' Print the receipt text
+    '    lineOffset = printFont.GetHeight(e.Graphics) - 4
+    '    x = 10
+    '    y = 25 + lineOffset
+    '    e.Graphics.DrawString("123xxstreet,xxxcity,xxxxstate", printFont, Brushes.Black, x, y)
+    '    y += lineOffset
+    '    e.Graphics.DrawString("        TEL   9999-99-9999       C#2", printFont, Brushes.Black, x, y)
+    '    y += lineOffset
+    '    e.Graphics.DrawString("    November.23, 2007     PM 4:24", printFont, Brushes.Black, x, y)
+    '    y += (lineOffset * 5)
+    '    e.Graphics.DrawString("apples                       $20.00", printFont, Brushes.Black, x, y)
+    '    y += lineOffset
+    '    e.Graphics.DrawString("grapes                       $30.00", printFont, Brushes.Black, x, y)
+    '    y += lineOffset
+    '    e.Graphics.DrawString("bananas                      $40.00", printFont, Brushes.Black, x, y)
+    '    y += lineOffset
+    '    e.Graphics.DrawString("lemons                       $50.00", printFont, Brushes.Black, x, y)
+    '    y += lineOffset
+    '    e.Graphics.DrawString("oranges                      $60.00", printFont, Brushes.Black, x, y)
+    '    y += (lineOffset * 5)
+    '    e.Graphics.DrawString("Tax excluded.               $200.00", printFont, Brushes.Black, x, y)
+    '    y += lineOffset
+    '    e.Graphics.DrawString("Tax     5.0%                 $10.00", printFont, Brushes.Black, x, y)
+    '    y += lineOffset
+    '    e.Graphics.DrawString("___________________________________", printFont, Brushes.Black, x, y)
+
+    '    printFont = New Font("MingLiU", 19, FontStyle.Regular, GraphicsUnit.Point)
+    '    lineOffset = printFont.GetHeight(e.Graphics) - 4
+    '    y += lineOffset
+    '    e.Graphics.DrawString("Total     $210.00", printFont, Brushes.Black, x - 1, y)
+
+    '    printFont = New Font("Lucida Console", 8, FontStyle.Regular, GraphicsUnit.Point)
+    '    lineOffset = printFont.GetHeight(e.Graphics)
+    '    y += lineOffset
+    '    e.Graphics.DrawString("Customer's payment         $250.00", printFont, Brushes.Black, x, y)
+    '    y += lineOffset
+    '    e.Graphics.DrawString("Change                      $40.00", printFont, Brushes.Black, x, y - 2)
+
+
+    '    Dim url As String = "http://192.168.10.20:8010/test/"
+    '    Dim tClient As WebClient = New WebClient
+    '    Dim tImage As Bitmap = Bitmap.FromStream(New MemoryStream(tClient.DownloadData(url)))
+
+    '    PictureBox1.Image = tImage
+    '    x = 20
+    '    y += lineOffset
+    '    e.Graphics.DrawImage(PictureBox1.Image, x, y, 120, 120)
+
+    '    ' Indicate that no more data to print, and the Print Document can now send the print data to the spooler.
+    '    e.HasMorePages = False
+    'End Sub
+
+    ' The executed function when the Close button is clicked.
+    Private Sub cmdClose_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdClose.Click
+        Close()
+    End Sub
+
+
+
+    Sub print_document(license As String)
+        If license = "" Then
+            Exit Sub
+        End If
+        'Check License plate is Exist.
+        Dim jsonStr As String
+        jsonStr = db.StringGet(license)
+        If jsonStr Is Nothing Then
+            setText("Not found license : " & license)
+            Exit Sub
+        End If
+        objCurrentPrintingJson = getJsonObject(jsonStr)
+        'Dim test As String = objCurrentPrintingJson("license")
+
+        vDocumentType = objCurrentPrintingJson("document")
+
+        pdPrint = New PrintDocument
+        ' Change the printer to the indicated printer
+        pdPrint.PrinterSettings.PrinterName = PRINTER_NAME
+
+        With pdPrint
+            .PrinterSettings.PrinterName = PRINTER_NAME
+            .DefaultPageSettings.PaperSize = New Printing.PaperSize("TM82", MMToHP(80),
+                                                                                MMToHP(150))
+            .DefaultPageSettings.Margins = New System.Drawing.Printing.Margins(0, 0, 0, 0)
+            .DefaultPageSettings.PrinterResolution.X = 204
+            .DefaultPageSettings.PrinterResolution.Y = 204
+        End With
+
+        If pdPrint.PrinterSettings.IsValid Then
+            pdPrint.DocumentName = "TID priting"
+            ' Start printing
+            pdPrint.Print()
+        Else
+            MessageBox.Show("Printer is not available.", "Program04", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+        End If
+
+        'pdEirPrint = New PrintDocument
+        '' Change the printer to the indicated printer
+        'pdEirPrint.PrinterSettings.PrinterName = PRINTER_NAME
+
+        'With pdEirPrint
+        '    .PrinterSettings.PrinterName = PRINTER_NAME
+        '    .DefaultPageSettings.PaperSize = New Printing.PaperSize("TM82", MMToHP(80),
+        '                                                                        MMToHP(150))
+        '    .DefaultPageSettings.Margins = New System.Drawing.Printing.Margins(0, 0, 0, 0)
+        '    .DefaultPageSettings.PrinterResolution.X = 204
+        '    .DefaultPageSettings.PrinterResolution.Y = 204
+        'End With
+
+        'If pdEirPrint.PrinterSettings.IsValid Then
+        '    pdEirPrint.DocumentName = "EIR priting"
+        '    ' Start printing
+        '    pdEirPrint.Print()
+        'Else
+        '    MessageBox.Show("Printer is not available.", "Program04", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+        'End If
+    End Sub
+
+    Private Sub pdEirPrint_Print(ByVal sender As System.Object, ByVal e As PrintPageEventArgs) Handles pdEirPrint.PrintPage
+        Dim x, y, lineOffset As Integer
+
+        ' Instantiate font objects used in printing.
+        Dim printFont As New Font("Arial", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+        Dim headFont As New Font("Arial", 10, FontStyle.Bold, GraphicsUnit.Point) 'Substituted to FontA Font
+        'Dim thaiFont As New Font("Microsoft San Serif", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+
+        e.Graphics.PageUnit = GraphicsUnit.Point
+
+        Dim x_end As Integer
+        Dim x_half As Integer
+        Dim y_start As Integer
+        Dim y_end As Integer
+        x = 5
+        x_end = 220
+        x_half = 110
+        y = 10
+        'Company logo
+        e.Graphics.DrawImage(lcb1_logo.Image, x, y, 50, 40)
+        x = 150
+        e.Graphics.DrawImage(iso_logo.Image, x, y, 50, 40)
+        'EIR Topic
+        Dim thaiFont As New Font("Microsoft San Serif", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+        Dim thaiEIRFont As New Font("Microsoft San Serif", 14, FontStyle.Bold, GraphicsUnit.Point) 'Substituted to FontA Font
+
+        y += 60 : x = 10
+
+        e.Graphics.DrawString(My.Resources.thai.eir, thaiEIRFont, Brushes.Black, x, y)
+        lineOffset = thaiEIRFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("EQUIPMENT INTERCHANGE RECEIPT", headFont, Brushes.Black, x, y)
+        lineOffset = headFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 1), New Point(x, y), New Point(x_end, y))
+        lineOffset = 5
+
+        '--First Row
+        y += lineOffset : x = 10
+        y_start = y
+        e.Graphics.DrawString(My.Resources.thai.order_date + " Order date", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.shpping_line + " Shipping line", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("1/3/2018  5:31:00 PM", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("MSK1 ", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+        '--Second Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.container_no + " Container", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.imo + " IMO / UN NO.", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("PONU7522574", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("5", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Third Row
+        Dim voy_text As String
+        voy_text = My.Resources.thai.vessel & "/" & My.Resources.thai.voy &
+                    "Vessel/Voy"
+        y += lineOffset : x = 10
+
+        e.Graphics.DrawString(voy_text, printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.move + " Move", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("L61/741N  MAERSK LOME", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("FULL/OUT", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Fourt Row
+        Dim temp_text As String
+        temp_text = My.Resources.thai.temperature & " Temperature"
+        y += lineOffset : x = 10
+
+        e.Graphics.DrawString(temp_text, printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.pod + " POD", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("-5C", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("SINSG", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Fift Row
+        y += lineOffset : x = 10
+
+        e.Graphics.DrawString(My.Resources.thai.container_type & " Size /Type", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.date_ + " Date", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("40'  9'6  DV", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("1/4/2018  5:05:00 PM", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Six Row
+        y += lineOffset : x = 10
+
+        e.Graphics.DrawString(My.Resources.thai.iso_code & " ISO code", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.license + " Plate No", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("22DV", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("B633508", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Seven Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.truck_company & " Truck Company", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.consignee + " Consignee", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("OUTSIDE CONTRACT", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("MITSU", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Eight Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.booking_no & " Booking No", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.seal_no + " Seal No", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("574254177", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("B1039561   L SL", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Nine Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.weight & " Gross weight", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.exception + " Exception", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("30,149", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Ten Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.genset_no & " Genset No", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.damage + " Damage", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("Out of service", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+
+
+        '--Twelth Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.checker & " Checker", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.date_ + " Date", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("PLAPS", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("1/24/2018", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        y_end = y
+        '--Eleven Row
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(My.Resources.thai.remark & " Remark", printFont, Brushes.Black, x, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString("BANGKOK PRODUCE MERCHANDISING/00187", printFont, Brushes.Black, x, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        'Hale vertical Line
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x_half, y_start), New Point(x_half, y_end))
+
+        e.HasMorePages = False
+    End Sub
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
+        'get Current IP address.
+        Dim strHostName As String
+        Dim GetIPv4Address As String = ""
+        strHostName = System.Net.Dns.GetHostName()
+        Dim iphe As System.Net.IPHostEntry = System.Net.Dns.GetHostEntry(strHostName)
+
+        ' strIPAddress = System.Net.Dns.GetHostEntry(strHostName).AddressList(0).ToString()
+
+        For Each ipheal As System.Net.IPAddress In iphe.AddressList
+            If ipheal.AddressFamily = System.Net.Sockets.AddressFamily.InterNetwork Then
+                GetIPv4Address = ipheal.ToString()
+            End If
+        Next
+
+        GroupBox1.Text = GroupBox1.Text & GetIPv4Address
+
+        'redisClient = New RedisClient("127.0.0.1")
+        redis = ConnectionMultiplexer.Connect("127.0.0.1:6379")
+        db = redis.GetDatabase()
+        'Dim x As String
+        'x = redisClient.Get(Of String)("TESTLO")
+        'x = db.StringGet("TESTLO")
+        'Dim com As Object = getJsonObject(x)
+        'Dim test As String = com("license")
+        'Dim tempPost As Object = New With {Key .com = ""}
+        'Dim post As Object = JsonConvert.DeserializeAnonymousType(x, tempPost)
+
+
+        Dim subs As ISubscriber
+        subs = redis.GetSubscriber()
+        subs.Subscribe(GetIPv4Address, New Action(Of RedisChannel, RedisValue)(AddressOf OnMessage))
+
+        Dim versionNumber As Version
+        versionNumber = Assembly.GetExecutingAssembly().GetName().Version
+        Me.Text = Me.Text & " Version :" & versionNumber.Major & "." & versionNumber.Minor & "." & versionNumber.Build
+
+
+
+    End Sub
+
+    Private Sub OnMessage(ByVal channel As String, ByVal value As String)
+        setText(value)
+        'print_document(value)
+        setLicenseText(value)
+    End Sub
+
+
+    Private Sub setText(ByVal vStatus As String)
+        'lblTested.Text = DataGridView2.RowCount.ToString
+        If lblMsg.InvokeRequired Then
+            lblMsg.Invoke(New Action(Of String)(AddressOf setText), vStatus)
+            'lblTested.BackColor = Color.LightGreen
+        Else
+            lblMsg.Text = vStatus & " - " & Now
+            'lblPassed.BackColor = Color.LightGreen
+        End If
+    End Sub
+
+    Private Sub setLicenseText(ByVal vLicense As String)
+        'lblTested.Text = DataGridView2.RowCount.ToString
+        If txtLicense.InvokeRequired Then
+            txtLicense.Invoke(New Action(Of String)(AddressOf setLicenseText), vLicense)
+            'lblTested.BackColor = Color.LightGreen
+        Else
+            txtLicense.Text = vLicense
+            'lblPassed.BackColor = Color.LightGreen
+        End If
+    End Sub
+
+    'Public Sub Publish(ByVal channel As String, ByVal value As String)
+    '    SourceClient.Publish(channel, Helper.GetBytes(value))
+    'End Sub
+
+    'Sub receiveMsg(channe As RedisChannel, msg As RedisValue)
+    '    Console.Write(msg)
+    'End Sub
+
+    Public Shared Function getJsonObject(ByVal json As String) As Object
+        Dim jss As New JavaScriptSerializer()
+        'Dim client As WebClient = New WebClient()
+        'Dim json As String = client.DownloadString(address)
+        'jss = JavaScriptSerializer
+        Dim data As Object = jss.Deserialize(Of Object)(json)
+        Return data
+    End Function
+
+    Private Sub btnReprint_Click(sender As Object, e As EventArgs) Handles btnReprint.Click
+        print_document(txtLicense.Text.Trim.ToUpper)
+    End Sub
+
+
+
+    Private Sub txtLicense_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtLicense.KeyPress
+        If e.KeyChar = Microsoft.VisualBasic.ChrW(Keys.Return) Then
+            btnReprint_Click(sender, e)
+        End If
+    End Sub
+
+    Private Sub txtLicense_TextChanged(sender As Object, e As EventArgs) Handles txtLicense.TextChanged
+
+    End Sub
+
+    Private Sub btnFile_Click(sender As Object, e As EventArgs) Handles btnFile.Click
+        ' Call ShowDialog.
+        Dim result As DialogResult = OpenFileDialog1.ShowDialog()
+
+        ' Test result.
+        If result = Windows.Forms.DialogResult.OK Then
+            ' Do something.
+            lblFile.Text = OpenFileDialog1.SafeFileName
+        End If
+    End Sub
+
+    Private Sub btnFilePrint_Click(sender As Object, e As EventArgs) Handles btnFilePrint.Click
+        Dim doc As XmlDocument
+        doc = New XmlDocument
+        doc.Load(OpenFileDialog1.FileName)
+        makeJson(doc)
+    End Sub
+    Sub makeJson(doc As XmlDocument)
+        'Dim nodeList As XmlNodeList
+        Dim root As XmlNode
+        Dim body As XmlNode
+        root = doc.DocumentElement
+        Dim nsm As Xml.XmlNamespaceManager = New Xml.XmlNamespaceManager(doc.NameTable)
+        nsm.AddNamespace("argo", "http://www.navis.com/argo")
+
+
+        body = root.SelectSingleNode("argo:docBody/argo:truckVisit", nsm)
+        Dim document_type, printer As String
+        Dim license_number, truck_company_code, truck_company_name, truck_start As String
+
+        document_type = root.SelectSingleNode("argo:docDescription/docName", nsm).InnerText
+        'printer = root.SelectSingleNode("argo:docDescription/ipAddress", nsm).InnerText
+
+        license_number = root.SelectSingleNode("argo:docBody/argo:truckVisit/tvdtlsLicNbr", nsm).InnerText
+        truck_company_code = root.SelectSingleNode("argo:docBody/argo:truckVisit/tvdtlsTrkCompany", nsm).InnerText
+        truck_company_name = root.SelectSingleNode("argo:docBody/argo:truckVisit/tvdtlsTrkCompanyName", nsm).InnerText
+        truck_start = root.SelectSingleNode("argo:docBody/argo:truckVisit/tvdtlsTrkStartTime", nsm).InnerText
+
+        Dim nodeContainers As XmlNodeList
+        nodeContainers = root.SelectNodes("argo:docBody/argo:trkTransaction", nsm)
+        Dim node As XmlNode
+        Dim nodeValue As String
+        For Each node In nodeContainers
+            nodeValue = node.SelectSingleNode("argo:tranUnit/unitId", nsm).InnerText
+        Next
+    End Sub
+
+End Class

@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="licence" xml:space="preserve">
+    <value>ทะเบียนรถ</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lcb1_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>lcb1_logo.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="liftoff" xml:space="preserve">
+    <value>ส่งตู้</value>
+  </data>
+  <data name="lifton" xml:space="preserve">
+    <value>รับตู้</value>
+  </data>
+  <data name="iso" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>iso.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="booking_no" xml:space="preserve">
+    <value>หมายเลขจองตู้</value>
+  </data>
+  <data name="checker" xml:space="preserve">
+    <value>พนักงานตรวจสภาพ</value>
+  </data>
+  <data name="consignee" xml:space="preserve">
+    <value>ผู้รับสินค้า</value>
+  </data>
+  <data name="container_no" xml:space="preserve">
+    <value>หมายเลขตู้สินค้า</value>
+  </data>
+  <data name="container_type" xml:space="preserve">
+    <value>ขนาด/ชนิด</value>
+  </data>
+  <data name="damage" xml:space="preserve">
+    <value>ความเสียหาย</value>
+  </data>
+  <data name="date_" xml:space="preserve">
+    <value>วันที่</value>
+  </data>
+  <data name="eir" xml:space="preserve">
+    <value>ใบตรวจรับสภาพตู้สินค้า</value>
+  </data>
+  <data name="exception" xml:space="preserve">
+    <value>ข้อยกเว้น</value>
+  </data>
+  <data name="genset_no" xml:space="preserve">
+    <value>เครื่องปั่นไฟ</value>
+  </data>
+  <data name="imo" xml:space="preserve">
+    <value>รหัสสินค้าอันตราย</value>
+  </data>
+  <data name="iso_code" xml:space="preserve">
+    <value>รหัสมาตรฐาน</value>
+  </data>
+  <data name="license" xml:space="preserve">
+    <value>หมายเลขทะเบียนรถ</value>
+  </data>
+  <data name="move" xml:space="preserve">
+    <value>ลักษณะตู้เข้า-ออก</value>
+  </data>
+  <data name="order_date" xml:space="preserve">
+    <value>วันที่สั่ง</value>
+  </data>
+  <data name="pod" xml:space="preserve">
+    <value>ท่าขนถ่าย</value>
+  </data>
+  <data name="remark" xml:space="preserve">
+    <value>หมายเหตู</value>
+  </data>
+  <data name="seal_no" xml:space="preserve">
+    <value>หมายเลขผนึกตู้</value>
+  </data>
+  <data name="shpping_line" xml:space="preserve">
+    <value>สายการเดินเรือ</value>
+  </data>
+  <data name="temperature" xml:space="preserve">
+    <value>อุณหภูมิ</value>
+  </data>
+  <data name="truck_company" xml:space="preserve">
+    <value>บริษัทรถ</value>
+  </data>
+  <data name="vessel" xml:space="preserve">
+    <value>เรือ</value>
+  </data>
+  <data name="voy" xml:space="preserve">
+    <value>เที่ยวเรือ</value>
+  </data>
+  <data name="weight" xml:space="preserve">
+    <value>น้ำหนัก</value>
+  </data>
+</root>

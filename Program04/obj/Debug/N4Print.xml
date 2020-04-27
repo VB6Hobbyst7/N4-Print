@@ -1,0 +1,195 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+N4Print
+</name>
+</assembly>
+<members>
+<member name="T:Program04.My.Resources.thai">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.booking_no">
+<summary>
+  Looks up a localized string similar to หมายเลขจองตู้.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.checker">
+<summary>
+  Looks up a localized string similar to พนักงานตรวจสภาพ.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.consignee">
+<summary>
+  Looks up a localized string similar to ผู้รับสินค้า.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.container_no">
+<summary>
+  Looks up a localized string similar to หมายเลขตู้สินค้า.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.container_type">
+<summary>
+  Looks up a localized string similar to ขนาด/ชนิด.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.damage">
+<summary>
+  Looks up a localized string similar to ความเสียหาย.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.date_">
+<summary>
+  Looks up a localized string similar to วันที่.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.eir">
+<summary>
+  Looks up a localized string similar to ใบตรวจรับสภาพตู้สินค้า.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.exception">
+<summary>
+  Looks up a localized string similar to ข้อยกเว้น.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.genset_no">
+<summary>
+  Looks up a localized string similar to เครื่องปั่นไฟ.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.imo">
+<summary>
+  Looks up a localized string similar to รหัสสินค้าอันตราย.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.iso">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.iso_code">
+<summary>
+  Looks up a localized string similar to รหัสมาตรฐาน.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.lcb1_logo">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.licence">
+<summary>
+  Looks up a localized string similar to ทะเบียนรถ.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.license">
+<summary>
+  Looks up a localized string similar to หมายเลขทะเบียนรถ.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.liftoff">
+<summary>
+  Looks up a localized string similar to ส่งตู้.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.lifton">
+<summary>
+  Looks up a localized string similar to รับตู้.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.move">
+<summary>
+  Looks up a localized string similar to ลักษณะตู้เข้า-ออก.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.note">
+<summary>
+  Looks up a localized string similar to หมายเหตุ.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.notice">
+<summary>
+  Looks up a localized string similar to 1) ห้ามลงจากรถขณะอยู่ในลานตู้สินค้า
+2) ห้ามมีผู้โดยสารติดเข้ามาในลานตู้สินค้า
+3) ห้ามสูบบุหรี่และทิ้งขยะในลานตู้สินค้า
+4) กรณีมีปัญหาติดขัดด้านเอกสารหรือเส้นทางให้ติดต่อเบอร์ 038-408600 ต่อ 1776.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.order_date">
+<summary>
+  Looks up a localized string similar to วันที่สั่ง.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.pod">
+<summary>
+  Looks up a localized string similar to ท่าขนถ่าย.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.remark">
+<summary>
+  Looks up a localized string similar to หมายเหตู.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.seal_no">
+<summary>
+  Looks up a localized string similar to หมายเลขผนึกตู้.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.shpping_line">
+<summary>
+  Looks up a localized string similar to สายการเดินเรือ.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.special_text">
+<summary>
+  Looks up a localized string similar to ดูตัวเลขตำแหน่งตู้ที่เป็นสีเหลืองเท่านั้น.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.temperature">
+<summary>
+  Looks up a localized string similar to อุณหภูมิ.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.truck_company">
+<summary>
+  Looks up a localized string similar to บริษัทรถ.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.vessel">
+<summary>
+  Looks up a localized string similar to เรือ.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.voy">
+<summary>
+  Looks up a localized string similar to เที่ยวเรือ.
+</summary>
+</member>
+<member name="P:Program04.My.Resources.thai.weight">
+<summary>
+  Looks up a localized string similar to น้ำหนัก.
+</summary>
+</member>
+<member name="M:Program04.Ini.#ctor(System.String)">
+ <summary>
+ </summary>
+ <param name="IniFileName">Drive,Path and Filname for the inifile</param>
+ <remarks></remarks>
+</member>
+</members>
+</doc>
