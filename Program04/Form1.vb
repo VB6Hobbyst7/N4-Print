@@ -520,38 +520,63 @@ Public Class Form1
             Next
 
             Dim url As String = BARCODE_SERVER & vLicence
-            Dim tClient As WebClient = New WebClient
-            Dim tImage As Bitmap = Bitmap.FromStream(New MemoryStream(tClient.DownloadData(url)))
-            PictureBox1.Image = tImage
+            'Dim tClient As WebClient = New WebClient
+            'Dim tImage As Bitmap = Bitmap.FromStream(New MemoryStream(tClient.DownloadData(url)))
+            'PictureBox1.Image = tImage
+
+            'Edit by Chutchai on May 11,2020
+            'Change method to get QR code
+            PictureBox1.Image = getQRCode(url)
+            '---------------------------------
             lineOffset = positionFont.GetHeight(e.Graphics)
             y += lineOffset
             x = 1
-            e.Graphics.DrawImage(PictureBox1.Image, x, y, 160, 160)
+            'Added by Chutchai on May 11,2020
+            'if No QR image returned , not print.
+            If Not PictureBox1.Image Is Nothing Then
+                e.Graphics.DrawImage(PictureBox1.Image, x, y, 160, 160)
+            End If
+            '-------------------------------------
             y += 161
-            e.Graphics.DrawString("___________________________________________", printFont, Brushes.Black, x, y)
-            'Print Notice
+                e.Graphics.DrawString("___________________________________________", printFont, Brushes.Black, x, y)
+                'Print Notice
 
-            lineOffset = printFont.GetHeight(e.Graphics)
-            y = y + lineOffset
-            Dim noticeFont As New Font("Microsoft San Serif", 12, FontStyle.Bold, GraphicsUnit.Point)
-            e.Graphics.DrawString(My.Resources.thai.special_text, noticeFont, Brushes.Black, x, y)
+                lineOffset = printFont.GetHeight(e.Graphics)
+                y = y + lineOffset
+                Dim noticeFont As New Font("Microsoft San Serif", 12, FontStyle.Bold, GraphicsUnit.Point)
+                e.Graphics.DrawString(My.Resources.thai.special_text, noticeFont, Brushes.Black, x, y)
 
-            lineOffset = noticeFont.GetHeight(e.Graphics)
-            y = y + lineOffset
-            'to wordwrap text, you need to specify a layout rectangle
-            noticeFont = New Font("Microsoft San Serif", 10, FontStyle.Regular, GraphicsUnit.Point)
-            lineOffset = printFont.GetHeight(e.Graphics)
-            Dim strPolicy As String = My.Resources.thai.notice
-            e.Graphics.DrawString(strPolicy,
+                lineOffset = noticeFont.GetHeight(e.Graphics)
+                y = y + lineOffset
+                'to wordwrap text, you need to specify a layout rectangle
+                noticeFont = New Font("Microsoft San Serif", 10, FontStyle.Regular, GraphicsUnit.Point)
+                lineOffset = printFont.GetHeight(e.Graphics)
+                Dim strPolicy As String = My.Resources.thai.notice
+                e.Graphics.DrawString(strPolicy,
                                   noticeFont, Brushes.Black, New Rectangle(x, y + lineOffset, 200, 200),
                                   StringFormat.GenericTypographic)
 
-        End If
+            End If
 
 
-        ' Indicate that no more data to print, and the Print Document can now send the print data to the spooler.
-        e.HasMorePages = False
+            ' Indicate that no more data to print, and the Print Document can now send the print data to the spooler.
+            e.HasMorePages = False
     End Sub
+
+    Function getQRCode(vUrl As String) As Bitmap
+        Dim vImage As Bitmap
+        Try
+            Dim tClient As New System.Net.WebClient
+            'tClient.Credentials = New System.Net.NetworkCredential()
+            Dim ImageInBytes() As Byte = tClient.DownloadData(vUrl)
+            Dim ImageStream As New IO.MemoryStream(ImageInBytes)
+            vImage = Bitmap.FromStream(ImageStream)
+            tClient.Dispose()
+        Catch ex As Exception
+            vImage = Nothing
+        End Try
+        Return vImage
+    End Function
 
 
     Private Sub EirPrint(container As Object, license As String, company As String,
@@ -827,6 +852,7 @@ Public Class Form1
 
 
     Sub print_document(license As String, Optional jsonStr As String = "")
+        On Error GoTo HasError
 
         If jsonStr = "" Then
             If license = "" Then
@@ -888,7 +914,10 @@ Public Class Form1
         Else
             MessageBox.Show("Printer is not available.", "Program04", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
         End If
+        Exit Sub
 
+HasError:
+        'MsgBox("Error on print_document : " & Err.Description)
     End Sub
 
 
@@ -1064,7 +1093,7 @@ Public Class Form1
 
 
         body = root.SelectSingleNode("argo:docBody/argo:truckVisit", nsm)
-        Dim document_type, printer, terminal As String
+        Dim document_type, terminal As String
         Dim license_number, truck_company_code, truck_company_name, truck_start As String
 
         document_type = root.SelectSingleNode("argo:docDescription/docName", nsm).InnerText
@@ -1091,7 +1120,7 @@ Public Class Form1
             .company_code = truck_company_code
             .document = document_type
             .license = license_number
-            .printer = printer
+            .printer = "" 'printer
             .terminal = ""
             .start = truck_start
         End With

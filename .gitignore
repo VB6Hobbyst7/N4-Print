@@ -1,5 +1,5 @@
 # Don't track content of these folders
-packages/*
+packages/
 Program04/bin/*
 Program04/obj/*
 
