@@ -2,6 +2,7 @@
 packages/
 Program04/bin/*
 Program04/obj/*
+.vs/
 
 
 # Compiled source #

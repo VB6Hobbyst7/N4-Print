@@ -41,4 +41,6 @@ C:\Users\Chutchai\Documents\git\lab\flask\n4-print\Program04\Program04\bin\N4Pri
 C:\Users\Chutchai\Documents\git\lab\flask\n4-print\Program04\Program04\obj\Debug\N4Print.exe
 C:\Users\Chutchai\Documents\git\lab\flask\n4-print\Program04\Program04\obj\Debug\N4Print.xml
 C:\Users\Chutchai\Documents\git\lab\flask\n4-print\Program04\Program04\obj\Debug\N4Print.pdb
-C:\Users\Chutchai\Documents\git\lab\flask\n4-print\Program04\Program04\obj\Debug\Program04.vbprojResolveAssemblyReference.cache
+C:\Users\Chutchai\Documents\git\lab\flask\n4-print\Program04\Program04\obj\Debug\Program04.vbprojAssemblyReference.cache
+C:\Users\Chutchai\Documents\git\lab\flask\n4-print\Program04\Program04\obj\Debug\Program04.vbproj.CoreCompileInputs.cache
+C:\Users\Chutchai\Documents\git\lab\flask\n4-print\Program04\Program04\obj\Debug\Program04.vbproj.CopyComplete

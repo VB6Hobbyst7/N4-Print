@@ -825,10 +825,17 @@ Public Class Form1
         y += 1 : x = 10
 
         'to wordwrap text, you need to specify a layout rectangle
-        Dim strPolicy As String = "ข้าพเจ้าผู้ลงนามในเอกสารฉบับนี้ คือผู้ยอมรับว่าตู้สินค้าได้รับการตรวจสภาพ " &
-                                "และสินค้าอยู่ในสภาพเรียบร้อย ยกเว้นเฉพาะรายการหมายเหตุความเสียหายที่ระบุเท่านั้น " &
-                                "(THE UNDERSIGNED DECLARES THAT THE CONTAINER HAS BEEN INSPECTED AND ACCEPTED IN GOOD ORDER AND CONDITION " &
-                                "EXCEPT NOTED DAMAGE CODES.)"
+        'Dim strPolicy As String = "ข้าพเจ้าผู้ลงนามในเอกสารฉบับนี้ คือผู้ยอมรับว่าตู้สินค้าได้รับการตรวจสภาพ " &
+        '                        "และสินค้าอยู่ในสภาพเรียบร้อย ยกเว้นเฉพาะรายการหมายเหตุความเสียหายที่ระบุเท่านั้น " &
+        '                        "(THE UNDERSIGNED DECLARES THAT THE CONTAINER HAS BEEN INSPECTED AND ACCEPTED IN GOOD ORDER AND CONDITION " &
+        '                        "EXCEPT NOTED DAMAGE CODES.)"
+        'Edit by Chutchai on July 30,2020
+
+        Dim strPolicy As String = "โปรดรับทราบว่า ""ใบตรวจรับสภาพตู้สินค้า"" นี้ออกให้โดยถือว่าท่านยินยอมรับตู้สินค้า " &
+                                "และรับทราบเกี่ยวกับสินค้าและสภาพตู้สินค้าโดยไม่มีข้อโต้แย้ง " & vbCrLf &
+                                "ทั้งนี้ หากท่านมีข้อขัดข้องใดๆเกี่ยวกับสภาพตู้สินค้าโปรดแจ้ง LCB1/LCMT " &
+                                "ที่โทรศัพท์หมายเลข 038-408600 ต่อ 2780 หรือติดต่อเจ้าหน้าที่ประจำประตูขาออก (Gate Boot) " &
+                                "ภายใน 3 ชั่วโมงหลังจากเวลาที่ระบุบนใบตรวจรับสภาพตู้สินค้า"
         e.Graphics.DrawString(strPolicy,
                               Me.Font, Brushes.Black, New Rectangle(x, y, 200, 200),
                               StringFormat.GenericTypographic)
