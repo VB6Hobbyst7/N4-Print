@@ -514,9 +514,18 @@ Public Class Form1
                 lineOffset = containerFont.GetHeight(e.Graphics)
                 y += lineOffset : x = 1
                 e.Graphics.DrawString(objContainer("position"), positionFont, Brushes.Black, x, y)
-                e.Graphics.DrawString("Seal  :" & objContainer("seal1"), sealFont, Brushes.Black, xSeal, y + 5)
-                e.Graphics.DrawString("Damage: " & objContainer("damage"), sealFont, Brushes.Black, xSeal, y + sealFont.GetHeight(e.Graphics) + 10)
-                lineOffset = positionFont.GetHeight(e.Graphics)
+                'Move Seal and Damage under Position on version 1.0.10  On Aug 7,2020
+                y += positionFont.GetHeight(e.Graphics) : x = 1
+                e.Graphics.DrawString("Seal  :" & objContainer("seal1"), sealFont, Brushes.Black, x, y)
+                y += sealFont.GetHeight(e.Graphics) : x = 1
+                e.Graphics.DrawString("Damage: " & objContainer("damage"), sealFont, Brushes.Black, x, y)
+                y += sealFont.GetHeight(e.Graphics) : x = 1
+                e.Graphics.DrawString("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -", printFont, Brushes.Black, x, y)
+                lineOffset = printFont.GetHeight(e.Graphics)
+
+                'e.Graphics.DrawString("Seal  :" & objContainer("seal1"), sealFont, Brushes.Black, xSeal, y + 5)
+                'e.Graphics.DrawString("Damage: " & objContainer("damage"), sealFont, Brushes.Black, xSeal, y + sealFont.GetHeight(e.Graphics) + 10)
+                'lineOffset = positionFont.GetHeight(e.Graphics)
             Next
 
             Dim url As String = BARCODE_SERVER & vLicence
@@ -528,7 +537,7 @@ Public Class Form1
             'Change method to get QR code
             PictureBox1.Image = getQRCode(url)
             '---------------------------------
-            lineOffset = positionFont.GetHeight(e.Graphics)
+            lineOffset = sealFont.GetHeight(e.Graphics)
             y += lineOffset
             x = 1
             'Added by Chutchai on May 11,2020
