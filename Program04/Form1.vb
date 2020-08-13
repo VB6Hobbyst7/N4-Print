@@ -17,6 +17,7 @@ Imports Program04.N4JsonDocument
 Imports System.Collections.Generic
 Imports Newtonsoft.Json.Linq
 Imports System.Globalization
+Imports System.Text
 
 Public Class Form1
     Inherits System.Windows.Forms.Form
@@ -430,6 +431,106 @@ Public Class Form1
     End Function
 
 
+    Private Sub SendArrivalDeparture(vDocumentType As String, TruckLicense As String)
+        Try
+            Dim url As String
+            Dim vJsonString As String = ""
+            '1) Get Truck Gate-In from TruckQ service (http://10.24.50.93:5000/maingate/raw/604084)
+            TruckLicense = TruckLicense.Replace("A", "").Replace("B", "")
+            vJsonString = getTrackQData("http://10.24.50.93:5000/maingate/raw/" & TruckLicense)
+            If vJsonString = "" Then
+                Exit Sub
+            End If
+            Dim objJson As Object
+            objJson = getJsonObject(vJsonString)
+            If objJson Is Nothing Then
+                Exit Sub
+            End If
+
+            objJson("Password") = "P@55w0rd"
+            Dim vTerminal As String = objJson("TERMINAL_ID")
+            Dim vUser As String
+            If vTerminal = "LCBB1" Then
+                vUser = "lcbb1adm"
+            Else
+                'LCBA0
+                vUser = "lcba0adm"
+            End If
+            objJson("User") = vUser
+
+            If vDocumentType = "TID" Then
+                'Add "Arrival_to_TLC_Gate_Time" item
+                url = "http://www.truckq_api.laemchabangport.com:8043/TQ_API_TLC/api/TLC_Gate/Insert_ArriveTLC"
+                objJson("Arrival_to_TLC_Gate_Time") = Now.ToString("yyyy-MM-dd HH:mm:ss")
+            Else
+                url = "http://www.truckq_api.laemchabangport.com:8043/TQ_API_TLC/api/TLC_Gate/Insert_DepartureTLC"
+                objJson("Departure_from_TLC_Gate_Time") = Now.ToString("yyyy-MM-dd HH:mm:ss")
+            End If
+
+
+            WriteToErrorLog(TruckLicense, postData(url, objJson))
+
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
+    Private Sub WriteToErrorLog(ByVal truck As String,
+       ByVal success As Boolean)
+
+        If Not System.IO.Directory.Exists(Application.StartupPath & "\logs\") Then
+            System.IO.Directory.CreateDirectory(Application.StartupPath & "\logs\")
+        End If
+
+        'check the file
+        Dim fname As String = Application.StartupPath & "\logs\" & Now.ToString("yyyy-MM-dd") & ".txt"
+        Dim fs As FileStream
+        fs = New FileStream(fname, FileMode.OpenOrCreate, FileAccess.ReadWrite)
+        Dim s As StreamWriter = New StreamWriter(fs)
+        s.Close()
+        fs.Close()
+
+        'log it
+        Dim fs1 As FileStream = New FileStream(fname, FileMode.Append, FileAccess.Write)
+        Dim s1 As StreamWriter = New StreamWriter(fs1)
+        s1.Write(Now & ":" & truck & "--" & IIf(success, "Successful", "Failed") & vbCrLf)
+        s1.Close()
+        fs1.Close()
+
+    End Sub
+
+    Private Function postData(ByVal Uri As String, ByVal dictData As Dictionary(Of String, Object)) As Boolean
+        Dim webClient As New WebClient()
+        Dim resByte As Byte()
+        Dim resString As String
+        Dim reqString() As Byte
+
+        Try
+            webClient.Headers("content-type") = "application/json"
+            reqString = Encoding.Default.GetBytes(JsonConvert.SerializeObject(dictData, Xml.Formatting.Indented))
+            resByte = webClient.UploadData(Uri, "post", reqString)
+            resString = Encoding.Default.GetString(resByte)
+            Console.WriteLine(resString)
+            webClient.Dispose()
+            Return True
+        Catch ex As Exception
+            Console.WriteLine(ex.Message)
+        End Try
+        Return False
+    End Function
+
+    Private Function getTrackQData(vUrl As String) As String
+        Dim json As String
+        Try
+            Dim tClient As New System.Net.WebClient
+            'tClient.Credentials = New System.Net.NetworkCredential()
+            json = tClient.DownloadString(vUrl)
+            tClient.Dispose()
+        Catch ex As Exception
+            json = ""
+        End Try
+        Return json
+    End Function
 
     ' The event handler function when pdPrint.Print is called.
     ' This is where the actual printing of sample data to the printer is made.
@@ -439,6 +540,14 @@ Public Class Form1
         Dim vPrintDate As String = objCurrentPrintingJson("start")
         Dim vLicence As String = objCurrentPrintingJson("license")
         Dim vNote As String = ""
+        Dim vCallCard As String = ""
+
+        '--Added by Chutchai on Aug 11,2020 
+        'To send Arrival and Departure to PAT
+        'Per Truck (not per Container)
+        SendArrivalDeparture(vDocumentType, vLicence)
+        '-----------------------------------
+
 
         '--Added by Chutchai on Dec 10,2019 
         'To support Note key
@@ -449,6 +558,13 @@ Public Class Form1
                 Exit For
             End If
         Next
+
+        For Each key In objCurrentPrintingJson.keys
+            If key = "callcard" Then
+                vCallCard = objCurrentPrintingJson("callcard")
+                Exit For
+            End If
+        Next
         '-----------------------------
 
         If vDocumentType = "EIR" Then
@@ -456,7 +572,7 @@ Public Class Form1
             Dim vYStart As Integer = 10
             For Each objContainer In objCurrentPrintingJson("containers")
                 EirPrint(objContainer, vLicence, objCurrentPrintingJson("company"), e)
-                Exit For
+                Exit For '????Why Exit for --Why Only One
             Next
 
             Exit Sub
@@ -528,7 +644,13 @@ Public Class Form1
                 'lineOffset = positionFont.GetHeight(e.Graphics)
             Next
 
+            'Added on Aug 11,2020
+            'On version 1.0.11 to support COSMOS (put call card number in to Barcode)
             Dim url As String = BARCODE_SERVER & vLicence
+            If vCallCard <> "" Then
+                url = BARCODE_SERVER & vCallCard
+            End If
+
             'Dim tClient As WebClient = New WebClient
             'Dim tImage As Bitmap = Bitmap.FromStream(New MemoryStream(tClient.DownloadData(url)))
             'PictureBox1.Image = tImage
@@ -926,6 +1048,8 @@ Public Class Form1
                 Next
             End If
 
+            'Set data to PAT (Arrival or Departure)
+
 
         Else
             MessageBox.Show("Printer is not available.", "Program04", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
@@ -935,6 +1059,8 @@ Public Class Form1
 HasError:
         'MsgBox("Error on print_document : " & Err.Description)
     End Sub
+
+
 
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
@@ -1041,12 +1167,31 @@ HasError:
     'End Sub
 
     Public Shared Function getJsonObject(ByVal json As String) As Object
-        Dim jss As New JavaScriptSerializer()
-        'Dim client As WebClient = New WebClient()
-        'Dim json As String = client.DownloadString(address)
-        'jss = JavaScriptSerializer
-        Dim data As Object = jss.Deserialize(Of Object)(json)
-        Return data
+
+        Try
+            Dim jss As New JavaScriptSerializer()
+            'Dim client As WebClient = New WebClient()
+            'Dim json As String = client.DownloadString(address)
+            'jss = JavaScriptSerializer
+            Dim data As Object = jss.Deserialize(Of Object)(json)
+            Return data
+        Catch ex As Exception
+            Return Nothing
+        End Try
+    End Function
+
+    Public Shared Function getJsonString(ByVal json As Object) As String
+
+        Try
+            Dim jss As New JavaScriptSerializer()
+            'Dim client As WebClient = New WebClient()
+            'Dim json As String = client.DownloadString(address)
+            'jss = JavaScriptSerializer
+            Dim data As String = jss.Serialize(json)
+            Return data
+        Catch ex As Exception
+            Return ""
+        End Try
     End Function
 
     Private Sub btnReprint_Click(sender As Object, e As EventArgs) Handles btnReprint.Click
