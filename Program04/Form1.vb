@@ -436,8 +436,9 @@ Public Class Form1
             Dim url As String
             Dim vJsonString As String = ""
             '1) Get Truck Gate-In from TruckQ service (http://10.24.50.93:5000/maingate/raw/604084)
+            TruckLicense = TruckLicense.Replace("AV", "").Replace("BV", "")
             TruckLicense = TruckLicense.Replace("A", "").Replace("B", "")
-            vJsonString = getTrackQData("http://10.24.50.93:5000/maingate/raw/" & TruckLicense)
+            vJsonString = getTrackQData("http://10.24.50.93:5000/maingate/raw/" & TruckLicense) 'No need prefix
             If vJsonString = "" Then
                 Exit Sub
             End If
