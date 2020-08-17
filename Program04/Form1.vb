@@ -872,7 +872,7 @@ Public Class Form1
         e.Graphics.DrawString(My.Resources.thai.seal_no + " Seal No", printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
-        e.Graphics.DrawString("", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(container("booking"), printFont, Brushes.Black, x, y)
         e.Graphics.DrawString(container("seal1"), printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
