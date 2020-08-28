@@ -767,7 +767,9 @@ Public Class Form1
         e.Graphics.DrawString(My.Resources.thai.shpping_line + " Shipping line", printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
-        e.Graphics.DrawString(container("created"), printFont, Brushes.Black, x, y)
+        'e.Graphics.DrawString(container("created"), printFont, Brushes.Black, x, y)
+        'Modify on Aug 24,2020 -- to replace with GateIn Date (version 1.0.13)
+        e.Graphics.DrawString(container("order_date"), printFont, Brushes.Black, x, y)
         e.Graphics.DrawString(container("line"), printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
@@ -835,7 +837,9 @@ Public Class Form1
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
         e.Graphics.DrawString(container("iso_text"), printFont, Brushes.Black, x, y)
-        e.Graphics.DrawString(container("created"), printFont, Brushes.Black, x_half, y)
+        'e.Graphics.DrawString(container("created"), printFont, Brushes.Black, x_half, y)
+        'Modify on Aug 24,2020 -- to replace with GateIn Date (version 1.0.13)
+        e.Graphics.DrawString(container("gatein_date"), printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
         e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
