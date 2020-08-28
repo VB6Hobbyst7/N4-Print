@@ -1038,6 +1038,8 @@ Public Class Form1
                 pdPrint.Print()
             End If
             If vDocumentType = "EIR" Then
+                'Added on Aug 28,2020 -- To print out 2 copies (version 1.0.14)
+                'pdPrint.PrinterSettings.Copies = 2
                 Dim objAllSingleContainer As Object
                 objAllSingleContainer = getJsonObject(jsonStr)
                 objCurrentPrintingJson.remove("containers")
@@ -1048,6 +1050,8 @@ Public Class Form1
                     Dim ContainerList As New List(Of Object)()
                     ContainerList.Add(c)
                     objCurrentPrintingJson("containers") = ContainerList
+                    pdPrint.Print()
+                    'Added on Aug 28,2020 -- To print out 2 copies (version 1.0.14)
                     pdPrint.Print()
                     objCurrentPrintingJson.remove("containers")
                 Next
