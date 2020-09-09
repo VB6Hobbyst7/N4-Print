@@ -928,6 +928,11 @@ Public Class Form1
         y += 1 : x = 10
         e.Graphics.DrawString(My.Resources.thai.remark & " Remark", printFont, Brushes.Black, x, y)
         lineOffset = printFont.GetHeight(e.Graphics)
+        'Added on Sep 9,2020 -- To fill Remark
+        y += lineOffset : x = 10 'Remark
+        e.Graphics.DrawString(container("remark"), printFont, Brushes.Black, x, y)
+        y += lineOffset : x = 10 'Remark2
+        e.Graphics.DrawString(container("remark2"), printFont, Brushes.Black, x, y)
 
         'Get damage from Database
         Dim strKey As String = container("number") & ":" & license & ":damage"
