@@ -1456,7 +1456,12 @@ HasError:
 
 
             Dim ttl As TimeSpan = New TimeSpan(365 * 2, 0, 0, 0, 0) ' 60 * 60 * 24 * 365 * 2 '2 years
-            Dim key As String = txtContainer.Text.Trim.ToUpper & ":" & txtLicensePlate.Text.Trim.ToUpper &
+            'Dim key As String = txtContainer.Text.Trim.ToUpper & ":" & txtLicensePlate.Text.Trim.ToUpper &
+            '                    ":damage"
+            'Remove space from Container on Sep 11,2020
+            'on version 1.0.16
+
+            Dim key As String = txtContainer.Text.Replace(" ", "").Trim.ToUpper & ":" & txtLicensePlate.Text.Replace(" ", "").Trim.ToUpper &
                                 ":damage"
             Dim value As String = txtDamageMessage.Text.Trim
             db.StringSet(key, value, ttl)
