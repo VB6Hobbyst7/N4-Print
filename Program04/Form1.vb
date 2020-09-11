@@ -438,6 +438,8 @@ Public Class Form1
             '1) Get Truck Gate-In from TruckQ service (http://10.24.50.93:5000/maingate/raw/604084)
             TruckLicense = TruckLicense.Replace("AV", "").Replace("BV", "")
             TruckLicense = TruckLicense.Replace("A", "").Replace("B", "")
+            TruckLicense = TruckLicense.Replace("-1", "").Replace("-2", "")
+            TruckLicense = TruckLicense.Replace("-3", "").Replace("-4", "")
             vJsonString = getTrackQData("http://10.24.50.93:5000/maingate/raw/" & TruckLicense) 'No need prefix
             If vJsonString = "" Then
                 Exit Sub
@@ -817,10 +819,10 @@ Public Class Form1
 
         '--Fourt Row
         Dim temp_text As String
-        temp_text = My.Resources.thai.temperature & " Temperature"
+        temp_text = My.Resources.thai.temperature & " Read Temp."
         y += 1 : x = 10
         e.Graphics.DrawString(temp_text, printFont, Brushes.Black, x, y)
-        e.Graphics.DrawString(My.Resources.thai.pod + " POD", printFont, Brushes.Black, x_half, y)
+        e.Graphics.DrawString(My.Resources.thai.pod + " POD/POL", printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
         e.Graphics.DrawString(container("temperature"), printFont, Brushes.Black, x, y)
@@ -975,7 +977,7 @@ Public Class Form1
         Dim strPolicy As String = "โปรดรับทราบว่า ""ใบตรวจรับสภาพตู้สินค้า"" นี้ออกให้โดยถือว่าท่านยินยอมรับตู้สินค้า " &
                                 "และรับทราบเกี่ยวกับสินค้าและสภาพตู้สินค้าโดยไม่มีข้อโต้แย้ง " & vbCrLf &
                                 "ทั้งนี้ หากท่านมีข้อขัดข้องใดๆเกี่ยวกับสภาพตู้สินค้าโปรดแจ้ง LCB1/LCMT " &
-                                "ที่โทรศัพท์หมายเลข 038-408600 ต่อ 2780 หรือติดต่อเจ้าหน้าที่ประจำประตูขาออก (Gate Boot) " &
+                                "ที่โทรศัพท์หมายเลข 038-408600 ต่อ 2780 หรือติดต่อเจ้าหน้าที่ประจำประตูขาออก (Gate Booth) " &
                                 "ภายใน 3 ชั่วโมงหลังจากเวลาที่ระบุบนใบตรวจรับสภาพตู้สินค้า"
         e.Graphics.DrawString(strPolicy,
                               Me.Font, Brushes.Black, New Rectangle(x, y, 200, 200),
