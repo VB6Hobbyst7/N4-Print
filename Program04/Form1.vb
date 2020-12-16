@@ -435,6 +435,16 @@ Public Class Form1
         Try
             Dim url As String
             Dim vJsonString As String = ""
+
+            'Added on Dec 16,2020 -- To send all truck to PAT (version 1.0.17)
+            Dim vTerm As String = ""
+            If TruckLicense.Contains("A") Then
+                vTerm = "LCBA0"
+            Else
+                vTerm = "LCBB1"
+            End If
+            '-------------------------------------------------------------
+
             '1) Get Truck Gate-In from TruckQ service (http://10.24.50.93:5000/maingate/raw/604084)
             TruckLicense = TruckLicense.Replace("AV", "").Replace("BV", "")
             TruckLicense = TruckLicense.Replace("A", "").Replace("B", "")
@@ -442,7 +452,17 @@ Public Class Form1
             TruckLicense = TruckLicense.Replace("-3", "").Replace("-4", "")
             vJsonString = getTrackQData("http://10.24.50.93:5000/maingate/raw/" & TruckLicense) 'No need prefix
             If vJsonString = "" Then
-                Exit Sub
+                'Added on Dec 16,2020 -- To send all truck ,on version 1.0.17
+
+                vJsonString = "{""CONTAINER_NO"": """"," & vbCrLf &
+                    """CONTAINER_NO_Size"": """"," & vbCrLf &
+                    """Main_Gate_Check_In_Time"": """"," & vbCrLf &
+                    """QUOTA_DATE"": """", ""Remark"": """", ""Status"": ""1"", ""TERMINAL_ID"": """ + vTerm + """," & vbCrLf &
+                    """TruckQ_Booking_NO"": """"," & vbCrLf &
+                    """Truck_License_NO"": """ + TruckLicense + """," & vbCrLf &
+                    """Truck_License_Province"": """"}"
+
+                'Exit Sub
             End If
             Dim objJson As Object
             objJson = getJsonObject(vJsonString)
