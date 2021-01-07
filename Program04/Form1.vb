@@ -451,7 +451,7 @@ Public Class Form1
             TruckLicense = TruckLicense.Replace("-1", "").Replace("-2", "")
             TruckLicense = TruckLicense.Replace("-3", "").Replace("-4", "")
             vJsonString = getTrackQData("http://10.24.50.93:5000/maingate/raw/" & TruckLicense) 'No need prefix
-            If vJsonString = "" Then
+            If vJsonString = "{}" Then
                 'Added on Dec 16,2020 -- To send all truck ,on version 1.0.17
 
                 vJsonString = "{""CONTAINER_NO"": """"," & vbCrLf &
@@ -500,25 +500,30 @@ Public Class Form1
 
     Private Sub WriteToErrorLog(ByVal truck As String,
        ByVal success As Boolean)
+        Try
+            If Not System.IO.Directory.Exists(Application.StartupPath & "\logs\") Then
+                System.IO.Directory.CreateDirectory(Application.StartupPath & "\logs\")
+            End If
 
-        If Not System.IO.Directory.Exists(Application.StartupPath & "\logs\") Then
-            System.IO.Directory.CreateDirectory(Application.StartupPath & "\logs\")
-        End If
+            'check the file
+            Dim fname As String = Application.StartupPath & "\logs\" & Now.ToString("yyyy-MM-dd") & ".txt"
+            Dim fs As FileStream
+            fs = New FileStream(fname, FileMode.OpenOrCreate, FileAccess.ReadWrite)
+            Dim s As StreamWriter = New StreamWriter(fs)
+            s.Close()
+            fs.Close()
 
-        'check the file
-        Dim fname As String = Application.StartupPath & "\logs\" & Now.ToString("yyyy-MM-dd") & ".txt"
-        Dim fs As FileStream
-        fs = New FileStream(fname, FileMode.OpenOrCreate, FileAccess.ReadWrite)
-        Dim s As StreamWriter = New StreamWriter(fs)
-        s.Close()
-        fs.Close()
+            'log it
+            Dim fs1 As FileStream = New FileStream(fname, FileMode.Append, FileAccess.Write)
+            Dim s1 As StreamWriter = New StreamWriter(fs1)
+            s1.Write(Now & ":" & truck & "--" & IIf(success, "Successful", "Failed") & vbCrLf)
+            s1.Close()
+            fs1.Close()
 
-        'log it
-        Dim fs1 As FileStream = New FileStream(fname, FileMode.Append, FileAccess.Write)
-        Dim s1 As StreamWriter = New StreamWriter(fs1)
-        s1.Write(Now & ":" & truck & "--" & IIf(success, "Successful", "Failed") & vbCrLf)
-        s1.Close()
-        fs1.Close()
+        Catch ex As Exception
+
+        End Try
+
 
     End Sub
 
@@ -550,9 +555,9 @@ Public Class Form1
             json = tClient.DownloadString(vUrl)
             tClient.Dispose()
         Catch ex As Exception
-            json = ""
+            json = "{}"
         End Try
-        Return json
+        Return json.Replace(vbLf, "")
     End Function
 
     ' The event handler function when pdPrint.Print is called.
