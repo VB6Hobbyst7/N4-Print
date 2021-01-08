@@ -277,6 +277,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to หมายเลขใบเสร็จ.
+        '''</summary>
+        Friend Shared ReadOnly Property receipt_no() As String
+            Get
+                Return ResourceManager.GetString("receipt_no", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to หมายเหตุ.
         '''</summary>
         Friend Shared ReadOnly Property remark() As String

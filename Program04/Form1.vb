@@ -485,13 +485,17 @@ Public Class Form1
                 'Add "Arrival_to_TLC_Gate_Time" item
                 url = "http://www.truckq_api.laemchabangport.com:8043/TQ_API_TLC/api/TLC_Gate/Insert_ArriveTLC"
                 objJson("Arrival_to_TLC_Gate_Time") = Now.ToString("yyyy-MM-dd HH:mm:ss")
-            Else
+                WriteToErrorLog(TruckLicense, postData(url, objJson))
+            End If
+
+            If vDocumentType = "TID" Then
                 url = "http://www.truckq_api.laemchabangport.com:8043/TQ_API_TLC/api/TLC_Gate/Insert_DepartureTLC"
                 objJson("Departure_from_TLC_Gate_Time") = Now.ToString("yyyy-MM-dd HH:mm:ss")
+                WriteToErrorLog(TruckLicense, postData(url, objJson))
             End If
 
 
-            WriteToErrorLog(TruckLicense, postData(url, objJson))
+
 
         Catch ex As Exception
 
@@ -594,6 +598,14 @@ Public Class Form1
             End If
         Next
         '-----------------------------
+
+        If vDocumentType = "TICKET" Then
+            Dim objContainer As Object
+            Dim vYStart As Integer = 10
+            objContainer = objCurrentPrintingJson("containers")(0)
+            TicketPrint(objContainer, vLicence, objCurrentPrintingJson("company"), e)
+            Exit Sub
+        End If
 
         If vDocumentType = "EIR" Then
             Dim objContainer As Object
@@ -1019,6 +1031,224 @@ Public Class Form1
 
     End Sub
 
+
+    'Added on Jan 8,2021 -- To support Import Ticket Print
+    Private Sub TicketPrint(container As Object, license As String, company As String,
+                         ByVal e As PrintPageEventArgs)
+        Dim x, y, lineOffset As Integer
+        Dim info As TextInfo = New CultureInfo("en-US", False).TextInfo
+        ' Instantiate font objects used in printing.
+        Dim printFont As New Font("Arial", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+        Dim headFont As New Font("Arial", 10, FontStyle.Bold, GraphicsUnit.Point) 'Substituted to FontA Font
+        e.Graphics.PageUnit = GraphicsUnit.Point
+
+        Dim x_end As Integer
+        Dim x_half As Integer
+        Dim y_start As Integer
+        Dim y_end As Integer
+        x = 5
+        x_end = 220
+        x_half = 110
+        y = 10
+        'Company logo
+        If container("terminal") = "B1" Then
+            e.Graphics.DrawImage(lcb1_logo.Image, 10, y, 70, 50)
+        Else
+            e.Graphics.DrawImage(lcmt_logo.Image, 10, y, 70, 50)
+        End If
+
+        x = 150
+        e.Graphics.DrawImage(iso_logo.Image, x_half, y, 100, 60)
+        'EIR Topic
+        Dim thaiFont As New Font("Microsoft San Serif", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
+        Dim thaiEIRFont As New Font("Microsoft San Serif", 14, FontStyle.Bold, GraphicsUnit.Point) 'Substituted to FontA Font
+
+        y += 60 : x = 10
+
+        'e.Graphics.DrawString(My.Resources.thai.eir, thaiEIRFont, Brushes.Black, x, y)
+        'lineOffset = thaiEIRFont.GetHeight(e.Graphics)
+        'y += lineOffset : x = 10
+
+        e.Graphics.DrawString("IMPORT TICKET", headFont, Brushes.Black, x, y)
+        lineOffset = headFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        'Added on Jan 8,2021 -- Add Thai notification
+        Dim strNotification As String = "*เอกสารนี้ออกให้ผู้ได้รับอำนาจจาก Delivery Order " &
+                                "เพื่อใช้รับตู้สินค้านำเข้า*"
+        e.Graphics.DrawString(strNotification,
+                              Me.Font, Brushes.Black, New Rectangle(x, y, 200, 200),
+                              StringFormat.GenericTypographic)
+        y = y + 30
+
+        e.Graphics.DrawLine(New Pen(Color.Black, 1), New Point(x, y), New Point(x_end, y))
+        lineOffset = 5
+
+        '--First Row (Container number with Special text)
+        y += lineOffset : x = 10
+        y_start = y
+        e.Graphics.DrawString(My.Resources.thai.container_no + " Container", printFont, Brushes.Black, x, y)
+        lineOffset = headFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+
+        'Modify on Aug 24,2020 -- to replace with GateIn Date (version 1.0.13)
+        e.Graphics.DrawString(container("number"), headFont, Brushes.Black, x, y)
+        lineOffset = headFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+        '--Consignee Row
+        y += 5 : x = 10
+        e.Graphics.DrawString(My.Resources.thai.consignee + " Consignee", printFont, Brushes.Black, x, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(container("consignee"), printFont, Brushes.Black, x, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+        y_start = y
+        '--Booking and Receipt Row
+        e.Graphics.DrawString(My.Resources.thai.booking_no & " B/L No", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.receipt_no + " Receipt No", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(container("booking"), printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(license & "  (" & container("page") & ")", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Demurage and Storage Row
+        y += 1 : x = 10
+        e.Graphics.DrawString("Demurage Expire", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("Storage Expire", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(container("damurage"), headFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(container("storage"), headFont, Brushes.Black, x_half, y)
+        lineOffset = headFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Second Row (Order date , Shipping line)
+
+        e.Graphics.DrawString(My.Resources.thai.date_ + " Order date", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.shpping_line + " Shipping line", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        'e.Graphics.DrawString(container("created"), printFont, Brushes.Black, x, y)
+        'Modify on Aug 24,2020 -- to replace with GateIn Date (version 1.0.13)
+        e.Graphics.DrawString(container("order_date"), printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(container("line"), printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+        '--Third Row
+        Dim voy_text As String
+        voy_text = My.Resources.thai.vessel & "/" & My.Resources.thai.voy &
+                    "Vessel/Voy"
+        y += 1 : x = 10
+        e.Graphics.DrawString(voy_text, printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.move + " Move", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        'e.Graphics.DrawString(container("vessel_name"), printFont, Brushes.Black, x, y)
+        'Modify on Feb 24,2020 - To add Voy-In
+
+        If container("trans_type") = "DI" Or container("trans_type") = "DM" Then
+            'Import
+            e.Graphics.DrawString(LCase(container("vessel_name")) & "/" & container("voy_in"), printFont, Brushes.Black, x, y)
+        Else
+            'Export
+            e.Graphics.DrawString(LCase(container("vessel_name")) & "/" & container("voy_out"), printFont, Brushes.Black, x, y)
+        End If
+
+        'x_half
+        e.Graphics.DrawString(container("freightkind"), printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+
+        '--Fourt Row (Size)
+        y += 1 : x = 10
+        e.Graphics.DrawString(My.Resources.thai.container_type & " Size /Type", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("Code", printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawString(container("iso_text"), printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(container("code"), printFont, Brushes.Black, x_half, y)
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
+        '----------------------------
+
+
+
+
+
+        y_end = y
+
+
+        'Added on Aug 11,2020
+        'On version 1.0.11 to support COSMOS (put call card number in to Barcode)
+        Dim url As String = BARCODE_SERVER & "barcode/" & container("code")
+        'If vCallCard <> "" Then
+        '    url = BARCODE_SERVER & vCallCard
+        'End If
+
+        'Dim tClient As WebClient = New WebClient
+        'Dim tImage As Bitmap = Bitmap.FromStream(New MemoryStream(tClient.DownloadData(url)))
+        'PictureBox1.Image = tImage
+
+        'Edit by Chutchai on May 11,2020
+        'Change method to get QR code
+        PictureBox1.Image = getQRCode(url)
+        '---------------------------------
+        lineOffset = printFont.GetHeight(e.Graphics)
+        y += lineOffset
+        x = 1
+        'Added by Chutchai on May 11,2020
+        'if No QR image returned , not print.
+        If Not PictureBox1.Image Is Nothing Then
+            e.Graphics.DrawImage(PictureBox1.Image, x, y,
+                                 x_half, 50)
+        End If
+        '-------------------------------------
+
+        'Hale vertical Line
+        e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x_half, y_start), New Point(x_half, y_end))
+        'Notice Message
+
+        y += 50 : x = 10
+
+        Dim strPolicy As String = "คำแนะนำ " & vbCrLf &
+                                "1.ตั๋วนี้จะต้องแนบพร้อมใบสั่งงานทุกครั้งเพื่อรับตู้ที่ท่า B1/A0" & vbCrLf &
+                                "2.ต้องปฏิบัติตามกฏข้อบังคับของความปลอดภัยอย่างเคร่งครัด" & vbCrLf &
+                                "3.กรณีตั๋วสูญหาย ให้ติดต่อผู้นำเข้าเพื่ออกหนังสือรับรอง หรือหลักฐานการแจ้งความมาแสดง เพื่อขอรับตั๋วใหม่" & vbCrLf &
+                                "4.พนักงานขับรถหัวลากต้องนำตั๋วนี้มาติดต่อเพื่อขอรับตู้ทุกครั้ง มิฉะนั้นจะไม่ปล่อย" &
+                                "ตู้สินค้าโดยเด็ดขาด และทางบริษัทจะไม่รับผิดชอบในกรณีมีค่าใช้จ่ายใดๆ เกิดขึ้น" & vbCrLf &
+                                "5.หากมีข้อขัดข้อง กรุณาติดต่อโทรศัพท์หมายเลข 038-408600 ต่อแผนกลูกค้าสัมพันธ์"
+        e.Graphics.DrawString(strPolicy,
+                              Me.Font, Brushes.Black, New Rectangle(x, y, 200, 200),
+                              StringFormat.GenericTypographic)
+        y = y + 120
+        e.Graphics.DrawString("www.lcb1.com", thaiFont, Brushes.Black, x_end - 60, y)
+        'Dim format As StringFormat = New StringFormat(StringFormatFlags.DirectionRightToLeft)
+        'e.Graphics.DrawString("OPS 10 Rev. 04   ",
+        '                      Me.Font, Brushes.Black, New Rectangle(x, y, 200, 12),
+        '                      format)
+
+
+        e.HasMorePages = False
+
+    End Sub
+
     ' The executed function when the Close button is clicked.
     Private Sub cmdClose_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdClose.Click
         Close()
@@ -1085,6 +1315,26 @@ Public Class Form1
                     pdPrint.Print()
                     'Added on Aug 28,2020 -- To print out 2 copies (version 1.0.14)
                     pdPrint.Print()
+                    objCurrentPrintingJson.remove("containers")
+                Next
+            End If
+
+            If vDocumentType = "TICKET" Then
+                'Added on Aug 28,2020 -- To print out 2 copies (version 1.0.14)
+                'pdPrint.PrinterSettings.Copies = 2
+                Dim objAllSingleContainer As Object
+                objAllSingleContainer = getJsonObject(jsonStr)
+                objCurrentPrintingJson.remove("containers")
+                Dim c As Object
+                'Dim strContainer As String
+                For Each c In objAllSingleContainer("containers")
+                    'filter only containern
+                    Dim ContainerList As New List(Of Object)()
+                    ContainerList.Add(c)
+                    objCurrentPrintingJson("containers") = ContainerList
+                    pdPrint.Print()
+                    'Added on Aug 28,2020 -- To print out 2 copies (version 1.0.14)
+                    'pdPrint.Print()
                     objCurrentPrintingJson.remove("containers")
                 Next
             End If

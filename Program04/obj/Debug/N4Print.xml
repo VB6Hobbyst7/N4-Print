@@ -140,6 +140,11 @@ N4Print
   Looks up a localized string similar to ท่าขนถ่าย.
 </summary>
 </member>
+<member name="P:Program04.My.Resources.thai.receipt_no">
+<summary>
+  Looks up a localized string similar to หมายเลขใบเสร็จ.
+</summary>
+</member>
 <member name="P:Program04.My.Resources.thai.remark">
 <summary>
   Looks up a localized string similar to หมายเหตุ.

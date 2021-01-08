@@ -217,4 +217,7 @@
   <data name="special_text" xml:space="preserve">
     <value>ดูตัวเลขตำแหน่งตู้ที่เป็นสีเหลืองเท่านั้น</value>
   </data>
+  <data name="receipt_no" xml:space="preserve">
+    <value>หมายเลขใบเสร็จ</value>
+  </data>
 </root>
