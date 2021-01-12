@@ -27,6 +27,11 @@ N4Print
   Looks up a localized string similar to หมายเลขจองตู้.
 </summary>
 </member>
+<member name="P:Program04.My.Resources.thai.box_operator">
+<summary>
+  Looks up a localized string similar to เจ้าของตู้สินค้า.
+</summary>
+</member>
 <member name="P:Program04.My.Resources.thai.checker">
 <summary>
   Looks up a localized string similar to พนักงานตรวจสภาพ.

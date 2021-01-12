@@ -220,4 +220,7 @@
   <data name="receipt_no" xml:space="preserve">
     <value>หมายเลขใบเสร็จ</value>
   </data>
+  <data name="box_operator" xml:space="preserve">
+    <value>เจ้าของตู้สินค้า</value>
+  </data>
 </root>

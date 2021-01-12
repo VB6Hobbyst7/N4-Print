@@ -74,6 +74,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to เจ้าของตู้สินค้า.
+        '''</summary>
+        Friend Shared ReadOnly Property box_operator() As String
+            Get
+                Return ResourceManager.GetString("box_operator", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to พนักงานตรวจสภาพ.
         '''</summary>
         Friend Shared ReadOnly Property checker() As String

@@ -1058,7 +1058,7 @@ Public Class Form1
         End If
 
         x = 150
-        e.Graphics.DrawImage(iso_logo.Image, x_half, y, 100, 60)
+        'e.Graphics.DrawImage(iso_logo.Image, x_half, y, 100, 60)
         'EIR Topic
         Dim thaiFont As New Font("Microsoft San Serif", 8, FontStyle.Regular, GraphicsUnit.Point) 'Substituted to FontA Font
         Dim thaiEIRFont As New Font("Microsoft San Serif", 14, FontStyle.Bold, GraphicsUnit.Point) 'Substituted to FontA Font
@@ -1092,6 +1092,7 @@ Public Class Form1
 
         'Modify on Aug 24,2020 -- to replace with GateIn Date (version 1.0.13)
         e.Graphics.DrawString(container("number"), headFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(container("page"), headFont, Brushes.Black, x_half + 50, y)
         lineOffset = headFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
         e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
@@ -1106,6 +1107,8 @@ Public Class Form1
         y += lineOffset : x = 10
         e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
         '----------------------------
+
+        y += 5 : x = 10
         y_start = y
         '--Booking and Receipt Row
         e.Graphics.DrawString(My.Resources.thai.booking_no & " B/L No", printFont, Brushes.Black, x, y)
@@ -1113,14 +1116,14 @@ Public Class Form1
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
         e.Graphics.DrawString(container("booking"), printFont, Brushes.Black, x, y)
-        e.Graphics.DrawString(license & "  (" & container("page") & ")", printFont, Brushes.Black, x_half, y)
+        e.Graphics.DrawString(license, printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
         e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
         '----------------------------
 
         '--Demurage and Storage Row
-        y += 1 : x = 10
+        y += 5 : x = 10
         e.Graphics.DrawString("Demurage Expire", printFont, Brushes.Black, x, y)
         e.Graphics.DrawString("Storage Expire", printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
@@ -1133,9 +1136,9 @@ Public Class Form1
         '----------------------------
 
         '--Second Row (Order date , Shipping line)
-
-        e.Graphics.DrawString(My.Resources.thai.date_ + " Order date", printFont, Brushes.Black, x, y)
-        e.Graphics.DrawString(My.Resources.thai.shpping_line + " Shipping line", printFont, Brushes.Black, x_half, y)
+        y += 5 : x = 10
+        e.Graphics.DrawString(My.Resources.thai.date_ + " Print date", printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(My.Resources.thai.box_operator + " Box operator", printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
         'e.Graphics.DrawString(container("created"), printFont, Brushes.Black, x, y)
@@ -1151,7 +1154,7 @@ Public Class Form1
         Dim voy_text As String
         voy_text = My.Resources.thai.vessel & "/" & My.Resources.thai.voy &
                     "Vessel/Voy"
-        y += 1 : x = 10
+        y += 5 : x = 10
         e.Graphics.DrawString(voy_text, printFont, Brushes.Black, x, y)
         e.Graphics.DrawString(My.Resources.thai.move + " Move", printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
@@ -1176,7 +1179,7 @@ Public Class Form1
 
 
         '--Fourt Row (Size)
-        y += 1 : x = 10
+        y += 5 : x = 10
         e.Graphics.DrawString(My.Resources.thai.container_type & " Size /Type", printFont, Brushes.Black, x, y)
         e.Graphics.DrawString("Code", printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
@@ -1282,8 +1285,8 @@ Public Class Form1
 
         With pdPrint
             .PrinterSettings.PrinterName = PRINTER_NAME
-            .DefaultPageSettings.PaperSize = New Printing.PaperSize("TM82", MMToHP(80),
-                                                                                MMToHP(170)) '150
+            '.DefaultPageSettings.PaperSize = New Printing.PaperSize("TM82", MMToHP(80),
+            '                                                                    MMToHP(150)) '150
             .DefaultPageSettings.Margins = New System.Drawing.Printing.Margins(0, 0, 0, 0)
             .DefaultPageSettings.PrinterResolution.X = 204
             .DefaultPageSettings.PrinterResolution.Y = 204S
