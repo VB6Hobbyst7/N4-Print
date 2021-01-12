@@ -1069,7 +1069,7 @@ Public Class Form1
         'lineOffset = thaiEIRFont.GetHeight(e.Graphics)
         'y += lineOffset : x = 10
 
-        e.Graphics.DrawString("IMPORT TICKET", headFont, Brushes.Black, x, y)
+        e.Graphics.DrawString("DELIVERY TICKET", headFont, Brushes.Black, x, y)
         lineOffset = headFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
         'Added on Jan 8,2021 -- Add Thai notification
@@ -1230,8 +1230,11 @@ Public Class Form1
 
         y += 50 : x = 10
 
-        Dim strPolicy As String = "คำแนะนำ " & vbCrLf &
-                                "1.ตั๋วนี้จะต้องแนบพร้อมใบสั่งงานทุกครั้งเพื่อรับตู้ที่ท่า B1/A0" & vbCrLf &
+        e.Graphics.DrawString("คำแนะนำ", headFont, Brushes.Black, x, y)
+        lineOffset = headFont.GetHeight(e.Graphics)
+        y += lineOffset : x = 10
+
+        Dim strPolicy As String = "1.ตั๋วนี้จะต้องแนบพร้อมใบสั่งงานทุกครั้งเพื่อรับตู้ที่ท่า B1/A0" & vbCrLf &
                                 "2.ต้องปฏิบัติตามกฏข้อบังคับของความปลอดภัยอย่างเคร่งครัด" & vbCrLf &
                                 "3.กรณีตั๋วสูญหาย ให้ติดต่อผู้นำเข้าเพื่ออกหนังสือรับรอง หรือหลักฐานการแจ้งความมาแสดง เพื่อขอรับตั๋วใหม่" & vbCrLf &
                                 "4.พนักงานขับรถหัวลากต้องนำตั๋วนี้มาติดต่อเพื่อขอรับตู้ทุกครั้ง มิฉะนั้นจะไม่ปล่อย" &
