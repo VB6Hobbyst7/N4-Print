@@ -1288,8 +1288,8 @@ Public Class Form1
 
         With pdPrint
             .PrinterSettings.PrinterName = PRINTER_NAME
-            '.DefaultPageSettings.PaperSize = New Printing.PaperSize("TM82", MMToHP(80),
-            '                                                                    MMToHP(150)) '150
+            .DefaultPageSettings.PaperSize = New Printing.PaperSize("TM82", MMToHP(80),
+                                                                                MMToHP(150)) '150
             .DefaultPageSettings.Margins = New System.Drawing.Printing.Margins(0, 0, 0, 0)
             .DefaultPageSettings.PrinterResolution.X = 204
             .DefaultPageSettings.PrinterResolution.Y = 204S
