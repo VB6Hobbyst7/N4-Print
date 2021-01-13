@@ -9,7 +9,7 @@ Imports System.Runtime.InteropServices
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("N4Printing")>
-<Assembly: AssemblyDescription("N4 TID and EIR printing")>
+<Assembly: AssemblyDescription("Add Ticket print")>
 <Assembly: AssemblyCompany("LCB1")>
 <Assembly: AssemblyProduct("")>
 <Assembly: AssemblyCopyright("Copyright (C) LCB1 2020. All rights reserved.")>
@@ -29,4 +29,4 @@ Imports System.Runtime.InteropServices
 ' You can specify all the values or you can default the Build and Revision Numbers 
 ' by using the '*' as shown below:
 
-<Assembly: AssemblyVersion("1.0.18.0")>
+<Assembly: AssemblyVersion("1.0.19.0")>
