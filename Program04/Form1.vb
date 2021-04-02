@@ -483,13 +483,17 @@ Public Class Form1
 
             If vDocumentType = "TID" Then
                 'Add "Arrival_to_TLC_Gate_Time" item
-                url = "http://www.truckq_api.laemchabangport.com:8043/TQ_API_TLC/api/TLC_Gate/Insert_ArriveTLC"
+                'url = "http://www.truckq_api.laemchabangport.com:8043/TQ_API_TLC/api/TLC_Gate/Insert_ArriveTLC"
+                'Modify on April 2,2021 -- TO change new endpoint
+                url = "http://www.truckq_api.laemchabangport.com:8043/TruckQ/Backend/DEV/API_TLC_Arrival_Gate/api/v1/TLC_Revise_Arrival/create"
                 objJson("Arrival_to_TLC_Gate_Time") = Now.ToString("yyyy-MM-dd HH:mm:ss")
                 WriteToErrorLog(TruckLicense, postData(url, objJson))
             End If
 
-            If vDocumentType = "TID" Then
-                url = "http://www.truckq_api.laemchabangport.com:8043/TQ_API_TLC/api/TLC_Gate/Insert_DepartureTLC"
+            If vDocumentType = "EIR" Then
+                'url = "http://www.truckq_api.laemchabangport.com:8043/TQ_API_TLC/api/TLC_Gate/Insert_DepartureTLC"
+                'Modify on April 2,2021 -- TO change new endpoint
+                url = "http://www.truckq_api.laemchabangport.com:8043/TruckQ/Backend/DEV/API_TLC_Departure_Gate/api/v1/TLC_Revise_Departure/create"
                 objJson("Departure_from_TLC_Gate_Time") = Now.ToString("yyyy-MM-dd HH:mm:ss")
                 WriteToErrorLog(TruckLicense, postData(url, objJson))
             End If
