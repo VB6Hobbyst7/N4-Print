@@ -64,6 +64,10 @@ Public Class Form1
     Dim vDocumentType As String
 
 
+    'Added on April 2,2021 -- To fix send Departure 2 times
+    Dim vPreviousTruckLicence As String
+    Dim vPreviousContainer As String
+
 #Region " Windows Form Designer generated code "
 
     Public Sub New()
@@ -581,7 +585,10 @@ Public Class Form1
         '--Added by Chutchai on Aug 11,2020 
         'To send Arrival and Departure to PAT
         'Per Truck (not per Container)
-        SendArrivalDeparture(vDocumentType, vLicence)
+        If vLicence <> vPreviousTruckLicence Then
+            SendArrivalDeparture(vDocumentType, vLicence)
+            vPreviousTruckLicence = vLicence
+        End If
         '-----------------------------------
 
 
