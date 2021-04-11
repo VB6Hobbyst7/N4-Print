@@ -540,17 +540,23 @@ Public Class Form1
     End Sub
 
     Private Function postData(ByVal Uri As String, ByVal dictData As Dictionary(Of String, Object)) As Boolean
-        Dim webClient As New WebClient()
-        Dim resByte As Byte()
-        Dim resString As String
+        Dim webClient As New MyWebClient() 'WebClient()
+        'Dim resByte As Byte()
+        'Dim resString As String
         Dim reqString() As Byte
 
         Try
             webClient.Headers("content-type") = "application/json"
             reqString = Encoding.Default.GetBytes(JsonConvert.SerializeObject(dictData, Xml.Formatting.Indented))
-            resByte = webClient.UploadData(Uri, "post", reqString)
-            resString = Encoding.Default.GetString(resByte)
-            Console.WriteLine(resString)
+            'resByte = webClient.UploadData(Uri, "post", reqString)
+            'resString = Encoding.Default.GetString(resByte)
+            'Console.WriteLine(resString)
+            'Modify on April 11,2021 -- To appy async to function post (don't want to waiting for reseponse)
+            'Version 1.0.22
+            'Uri = "http://www.truckq_api.laemchabangport.com:9000/TruckQ/Backend/DEV/API_TLC_Arrival_Gate/api/v1/TLC_Revise_Arrival/create"
+            webClient.UploadDataAsync(New Uri(Uri), "post", reqString)
+
+
             webClient.Dispose()
             Return True
         Catch ex As Exception
@@ -563,7 +569,7 @@ Public Class Form1
         Dim json As String
         Try
             Dim tClient As New System.Net.WebClient
-            'tClient.Credentials = New System.Net.NetworkCredential()
+            'Dim tClient As New MyWebClient()
             json = tClient.DownloadString(vUrl)
             tClient.Dispose()
         Catch ex As Exception
@@ -1795,6 +1801,15 @@ HasError:
     End Sub
 End Class
 
+Public Class MyWebClient
+    Inherits WebClient
+
+    Protected Overrides Function GetWebRequest(ByVal uri As Uri) As WebRequest
+        Dim w As WebRequest = MyBase.GetWebRequest(uri)
+        w.Timeout = TimeSpan.FromSeconds(5).Milliseconds '20 * 60 * 1000
+        Return w
+    End Function
+End Class
 
 Public Class Ini
 
@@ -1966,6 +1981,4 @@ Public Class Ini
     '    End If
 
     'End Function
-
-
 End Class
