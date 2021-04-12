@@ -1036,8 +1036,9 @@ Public Class Form1
         e.Graphics.DrawString(strPolicy,
                               Me.Font, Brushes.Black, New Rectangle(x, y, 200, 200),
                               StringFormat.GenericTypographic)
-        y = y + 70
-        e.Graphics.DrawString("OPS 10 Rev. 04", thaiFont, Brushes.Black, x_end - 60, y)
+        y += 70 : x = 140
+        'lineOffset = thaiFont.GetHeight(e.Graphics)
+        e.Graphics.DrawString("OPS 10 Rev. 05", thaiFont, Brushes.Black, x, y)
         'Dim format As StringFormat = New StringFormat(StringFormatFlags.DirectionRightToLeft)
         'e.Graphics.DrawString("OPS 10 Rev. 04   ",
         '                      Me.Font, Brushes.Black, New Rectangle(x, y, 200, 12),
@@ -1306,7 +1307,7 @@ Public Class Form1
         With pdPrint
             .PrinterSettings.PrinterName = PRINTER_NAME
             .DefaultPageSettings.PaperSize = New Printing.PaperSize("TM82", MMToHP(80),
-                                                                                MMToHP(150)) '150
+                                                                                MMToHP(160)) '150
             .DefaultPageSettings.Margins = New System.Drawing.Printing.Margins(0, 0, 0, 0)
             .DefaultPageSettings.PrinterResolution.X = 204
             .DefaultPageSettings.PrinterResolution.Y = 204S
