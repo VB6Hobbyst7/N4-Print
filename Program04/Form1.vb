@@ -767,6 +767,16 @@ Public Class Form1
     End Function
 
 
+    Private Function IsExist(col As Object, field As String) As Boolean
+        On Error GoTo IsMissingError
+        Dim val As Object
+        val = col(field)
+        IsExist = True
+        Exit Function
+IsMissingError:
+        IsExist = False
+    End Function
+
     Private Sub EirPrint(container As Object, license As String, company As String,
                          ByVal e As PrintPageEventArgs)
         Dim x, y, lineOffset As Integer
@@ -825,7 +835,15 @@ Public Class Form1
         y += lineOffset : x = 10
         'e.Graphics.DrawString(container("created"), printFont, Brushes.Black, x, y)
         'Modify on Aug 24,2020 -- to replace with GateIn Date (version 1.0.13)
-        e.Graphics.DrawString(container("order_date"), printFont, Brushes.Black, x, y)
+        'Modify on May 11,2021 -- if N4 used container("created"), if COSMOS use container("order_date") (1.0.0.23)
+        Dim vOrderDate As String
+        If IsExist(container, "order_date") Then
+            vOrderDate = container("order_date")
+        Else
+            vOrderDate = container("created")
+        End If
+
+        e.Graphics.DrawString(vOrderDate, printFont, Brushes.Black, x, y)
         e.Graphics.DrawString(container("line"), printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
@@ -895,7 +913,14 @@ Public Class Form1
         e.Graphics.DrawString(container("iso_text"), printFont, Brushes.Black, x, y)
         'e.Graphics.DrawString(container("created"), printFont, Brushes.Black, x_half, y)
         'Modify on Aug 24,2020 -- to replace with GateIn Date (version 1.0.13)
-        e.Graphics.DrawString(container("gatein_date"), printFont, Brushes.Black, x_half, y)
+        'Modify on May 11,2021 -- if N4 used container("created"), if COSMOS use container("order_date") (1.0.0.23)
+        Dim vGateIn As String
+        If IsExist(container, "gatein_date") Then
+            vGateIn = container("gatein_date")
+        Else
+            vGateIn = container("created")
+        End If
+        e.Graphics.DrawString(vGateIn, printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
         e.Graphics.DrawLine(New Pen(Color.Black, 0), New Point(x, y), New Point(x_end, y))
@@ -933,7 +958,16 @@ Public Class Form1
         e.Graphics.DrawString(My.Resources.thai.seal_no + " Seal No", printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
-        e.Graphics.DrawString(container("booking"), printFont, Brushes.Black, x, y)
+
+        'Modify on May 11,2021 -- if N4 Booking is Null (1.0.0.23)
+        Dim vTmpBooking As String
+        If IsExist(container, "booking") Then
+            vTmpBooking = container("booking")
+        Else
+            vTmpBooking = ""
+        End If
+
+        e.Graphics.DrawString(vTmpBooking, printFont, Brushes.Black, x, y)
         e.Graphics.DrawString(container("seal1"), printFont, Brushes.Black, x_half, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         y += lineOffset : x = 10
@@ -985,10 +1019,21 @@ Public Class Form1
         e.Graphics.DrawString(My.Resources.thai.remark & " Remark", printFont, Brushes.Black, x, y)
         lineOffset = printFont.GetHeight(e.Graphics)
         'Added on Sep 9,2020 -- To fill Remark
+        'Modify on May 11,2021 -- if N4 No Remark and Remark2 (1.0.0.23)
+        Dim vTmpRemark As String = ""
+        Dim vTmpRemark2 As String = ""
+        If IsExist(container, "remark") Then
+            vTmpRemark = container("remark")
+        End If
+
+        If IsExist(container, "remark2") Then
+            vTmpRemark2 = container("remark2")
+        End If
+
         y += lineOffset : x = 10 'Remark
-        e.Graphics.DrawString(container("remark"), printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(vTmpRemark, printFont, Brushes.Black, x, y)
         y += lineOffset : x = 10 'Remark2
-        e.Graphics.DrawString(container("remark2"), printFont, Brushes.Black, x, y)
+        e.Graphics.DrawString(vTmpRemark2, printFont, Brushes.Black, x, y)
 
         'Get damage from Database
         Dim strKey As String = container("number") & ":" & license & ":damage"
