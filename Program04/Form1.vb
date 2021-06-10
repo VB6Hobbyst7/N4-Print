@@ -1120,6 +1120,12 @@ IsMissingError:
             e.Graphics.DrawImage(lcmt_logo.Image, 10, y, 70, 50)
         End If
 
+        '--Added on June 10,2021 -- To add terminal text
+        Dim terminalFont As New Font("Arial", 50, FontStyle.Bold, GraphicsUnit.Point)
+        x = 100
+        e.Graphics.DrawString(container("terminal"), terminalFont, Brushes.Black, x, 10)
+        '-----------------------------------------------
+
         x = 150
         'e.Graphics.DrawImage(iso_logo.Image, x_half, y, 100, 60)
         'EIR Topic
