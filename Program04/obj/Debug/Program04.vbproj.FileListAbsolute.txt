@@ -90,3 +90,4 @@ C:\Users\Chutchai\Documents\GitHub\Program04\Program04\obj\Debug\Program04.vbpro
 C:\Users\Chutchai\Documents\GitHub\Program04\Program04\obj\Debug\N4Print.exe
 C:\Users\Chutchai\Documents\GitHub\Program04\Program04\obj\Debug\N4Print.xml
 C:\Users\Chutchai\Documents\GitHub\Program04\Program04\obj\Debug\N4Print.pdb
+C:\Users\Chutchai\Documents\GitHub\Program04\Program04\bin\truck2.wav

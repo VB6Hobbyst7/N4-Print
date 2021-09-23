@@ -1373,6 +1373,8 @@ IsMissingError:
             ' Start printing
             If vDocumentType = "TID" Then
                 pdPrint.Print()
+                'Added on Sep 23,2021 -- To support play truck2.wav after print
+                PlayBackgroundSoundFile()
             End If
             If vDocumentType = "EIR" Then
                 'Added on Aug 28,2020 -- To print out 2 copies (version 1.0.14)
@@ -1587,7 +1589,17 @@ HasError:
         End If
     End Sub
 
+    Sub PlayBackgroundSoundFile()
+        Dim wav_file As String = Application.StartupPath + "\truck2.wav"
+        If My.Computer.FileSystem.FileExists(wav_file) Then
+            My.Computer.Audio.Play(wav_file, AudioPlayMode.Background)
+        End If
+
+    End Sub
+
     Private Sub btnFilePrint_Click(sender As Object, e As EventArgs) Handles btnFilePrint.Click
+
+
         Dim doc As XmlDocument
         doc = New XmlDocument
         doc.Load(OpenFileDialog1.FileName)

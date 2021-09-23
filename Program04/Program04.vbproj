@@ -259,6 +259,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="new_iso.jpg" />
+    <Content Include="truck2.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <PropertyGroup>
