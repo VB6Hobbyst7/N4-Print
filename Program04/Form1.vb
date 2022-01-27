@@ -592,7 +592,9 @@ Public Class Form1
         'To send Arrival and Departure to PAT
         'Per Truck (not per Container)
         If vLicence <> vPreviousTruckLicence Then
-            SendArrivalDeparture(vDocumentType, vLicence)
+            '--Comment on Jan 27,2022 on version 26 , PAT server is down.
+            'SendArrivalDeparture(vDocumentType, vLicence)
+            '--End---
             vPreviousTruckLicence = vLicence
         End If
         '-----------------------------------
